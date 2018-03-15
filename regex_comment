@@ -1,0 +1,16 @@
+alt: \/\*([^*]*|\*+[^*\\])*\*+\/
+neu: /\*([^\*]|\*+[^\*/])*\*+/
+
+---
+
+erklären.
+
+/\* : início
+grupo {
+  [^\*] : qualquer caractere que não seja um asterisco (i.e. quase tudo)
+  ou {
+    \*+ : um ou mais asteriscos
+    [^\*/] : qualquer caractere que não seja um asterisco nem uma barra
+  } : reconhece asterisco(s) não seguido(s) imediatamente por barra (i.e. fim do comentário)
+} : repetido até que...
+\*+/ : finaliza lendo um ou mais asteriscos seguidos IMEDIATAMENTE por uma barra
