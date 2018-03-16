@@ -1,0 +1,40 @@
+funktion main() zurück leer {
+  zeichenkette text ist "Hello!";
+  ganze num ist 10;
+  reelle floatNum ist 5.5;
+
+  falls (num == 10) {
+    num ist 0xFFFF;
+  } sonst {
+    num ist 0b1111;
+  }
+
+  // For testing purposes
+  boolesche test ist falsch;
+  
+  test ist wahr;
+  
+  für (ganze i ist 1; i < 10 und test; i++) {
+    floatNum ist floatNum + 0.5;
+  }
+
+  ganze modified ist num & 0b1001;
+
+  während (nicht test) {
+    modified ist modified >> 2;
+
+    falls (modified | 0b0010 >= 2) {
+      test ist falsch;
+    }
+  }
+
+  tun {
+    num--;
+  } während (num > 0);
+
+  falls (modified > 1 oder test == falsch) {
+    /* termi/nate*  *!*/  /* a
+    a ***/
+    zurückkehren;
+  }
+}
