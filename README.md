@@ -3,10 +3,9 @@ Repository für die Entwicklung der deutschen Programmiersprache, "Die Überspra
 
 
 
-### Funktionsdefinition
-
-**funktion** foo() **zurück leer** {
-
+## Funktionsdefinition
+```
+funktion foo() zurück leer {
   // Funktionskörper...
-  
 }
+```
