@@ -5,7 +5,7 @@ Repository für die Entwicklung der deutschen Programmiersprache, "Die Überspra
 
 ## Funktionsdefinition
 ```
-funktion foo() zurück leer {
+funktion foo() liefert leer zurück {
   // Funktionskörper...
 }
 ```
