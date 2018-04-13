@@ -7,8 +7,8 @@ ParserName = Sintatico
 SemanticName = Semantico
 Package = grammar
 ScannerCaseSensitive = true
-ScannerTable = Full
-Input = String
+ScannerTable = Compact
+Input = Stream
 Parser = SLR
 #RegularDefinitions
 NUM: [0-9]
@@ -41,13 +41,13 @@ COMMA : ","
 MOD: "%" 
 COLON : ":"
 END : ";"
-GT : "grÃ¶sser als"
+GT : "grösser als"
 LT : "kleiner als"
-GTE : "grÃ¶sser oder gleich"
+GTE : "grösser oder gleich"
 LTE : "kleiner oder gleich"
 EQ : "gleich"
 NEQ : "ungleich"
-ASSIGN : "erhÃ¤lt"
+ASSIGN : "erhält"
 M_COMMENT : {M_COMMENT}
 COMMENT : {COMMENT}
 SHIFT_RIGHT: ">>"
@@ -66,15 +66,15 @@ STRING : "zeichenkette" //string
 BOOL : "boolesche" //boolean
 CHAR: "zeichen" //char
 FUNC : "funktion" //function
-RETURN : "zurÃ¼ckliefern" //return
+RETURN : "zurückliefern" //return
 GIVES : "liefert" //gives
-BACK : "zurÃ¼ck" //back, as in: gives int back; liefert ganze zurÃ¼ck
+BACK : "zurück" //back, as in: gives int back; liefert ganze zurÃ¼ck
 IF : "falls" //if
 ELSE : "sonst" //else
 FALSE : "falsch" //false
 TRUE: "wahr" //true
-WHILE : "wÃ¤hrend" //while
-FOR : "fÃ¼r" //for
+WHILE : "während" //while
+FOR : "für" //for
 DO : "tun" //do
 READ: "lesen"
 WRITE: "schreiben"
@@ -83,17 +83,35 @@ ID : {ID}
 
 : [\s\t\n\r]
 #NonTerminals
+<program>
+
+<open_close>
 <function>
-<loop_open_close>
+
 <statement_r>
 <statement>
-<decl_assign>
-<assignment>
+
+<comment>
+
+<block>
+<if>
+<if_else>
+<for>
+<while>
+<do_while>
+
+<instruction>
 <declaration>
+<decl_assign>
+<decl_only>
+<assignment>
+<unary_assign>
+
+<return>
+
 <id_r>
 <input>
 <output>
-<condition>
 
 <exp>
 <exp1>
@@ -106,6 +124,7 @@ ID : {ID}
 <exp8>
 <exp9>
 <exp10>
+
 <literal>
 <relational>
 <negation>
@@ -114,20 +133,39 @@ ID : {ID}
 <arith_high>
 <type>
 <parameters>
-
 #Grammar
-<function>		::= FUNC ID RB_OPEN RB_CLOSE GIVES <type> BACK CB_OPEN <statement_r> CB_CLOSE;
-<loop_open_close>	::= CB_OPEN <statement> CB_CLOSE | RB_OPEN <exp> RB_CLOSE;
-<statement_r>	::= <statement_r> <statement> END | <statement> END;
-<statement>	::= <decl_assign> | <assignment> | <declaration> | <input> | <output>;
+<program>	::= <program> <function> | <function>;
+
+<open_close>	::= CB_OPEN <statement_r> CB_CLOSE;
+<function>	::= FUNC ID RB_OPEN RB_CLOSE GIVES <type> BACK <open_close>;
+
+<statement_r>	::= <statement_r> <statement> | <statement>;
+<statement>	::= <block> | <instruction> END | <comment>;
+
+<comment>	::= COMMENT | M_COMMENT;
+
+<block>		::= <if> | <if_else> | <while> | <for> | <do_while>;
+<if>		::= IF RB_OPEN <exp> RB_CLOSE <open_close>;
+<if_else>	::= <if> ELSE <open_close>;
+<for>		::= FOR RB_OPEN <declaration> END <exp> END <assignment> RB_CLOSE <open_close>;
+<while>		::= WHILE RB_OPEN <exp> RB_CLOSE <open_close>;
+<do_while>	::= DO <open_close> WHILE RB_OPEN <exp> RB_CLOSE END;
+
+<instruction>	::= <assignment> | <declaration> | <input> | <output> | <return>;
+<declaration>	::= <decl_assign> | <decl_only>;
 <decl_assign>	::= <type> <assignment>;
-<assignment>	::= ID ASSIGN <exp>;
-<declaration>	::= <type> <id_r>;
+<decl_only>	::= <type> <id_r>;
+<assignment>	::= ID ASSIGN <exp> | <unary_assign> ;
+<unary_assign>	::= ID INCREMENT | ID DECREMENT;
+
+<vector>	::= <type> <vector2>;
+<vector2>	::= <literal> <vector2>;
+
+<return>	::= RETURN | RETURN <exp>;
+
 <id_r>		::= ID COMMA <id_r> | ID;	
 <input>		::= READ ID;
-<output>		::= WRITE <exp>;
-
-<condition>	::= IF <loop_open_close> | WHILE <loop_open_close>;
+<output>	::= WRITE <exp>;
 
 <exp> 		::= <exp> OR <exp1> | <exp1>;
 <exp1>		::= <exp1> AND <exp2> | <exp2>;
@@ -141,10 +179,10 @@ ID : {ID}
 <exp9> 		::= <negation> <exp10> | <exp10>;
 <exp10>		::= <literal> | ID | RB_OPEN  <exp> RB_CLOSE ;
 
-<literal>		::= INT_LIT | FLOAT_LIT | BIN_LIT | HEX_LIT | STRING_LIT;	
+<literal>	::= INT_LIT | FLOAT_LIT | BIN_LIT | HEX_LIT | STRING_LIT | TRUE | FALSE;	
 <relational>	::= GT | LT | GTE | LTE | EQ | NEQ; 
 <negation>	::= MINUS | BIT_NOT | NOT;
-<bitwise>		::= SHIFT_LEFT | SHIFT_RIGHT;
+<bitwise>	::= SHIFT_LEFT | SHIFT_RIGHT;
 <arith_low> 	::= PLUS | MINUS;
 <arith_high>	::= MULT | DIV | MOD;
 <type>		::= INT | FLOAT | STRING | BOOL | VOID | CHAR;
