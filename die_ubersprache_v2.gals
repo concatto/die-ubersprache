@@ -8,7 +8,7 @@ SemanticName = Semantico
 Package = grammar
 ScannerCaseSensitive = true
 ScannerTable = Compact
-Input = Stream
+Input = String
 Parser = SLR
 #RegularDefinitions
 NUM: [0-9]
@@ -155,11 +155,9 @@ ID : {ID}
 <declaration>	::= <decl_assign> | <decl_only>;
 <decl_assign>	::= <type> <assignment>;
 <decl_only>	::= <type> <id_r>;
-<assignment>	::= ID ASSIGN <exp> | <unary_assign> ;
+<assignment>	::= ID ASSIGN <exp> | ID SB_OPEN INT_LIT SB_CLOSE | ID SB_OPEN ID
+ SB_CLOSE | ID SB_OPEN INT_LIT SB_CLOSE ASSIGN <exp> | <unary_assign> ;
 <unary_assign>	::= ID INCREMENT | ID DECREMENT;
-
-<vector>	::= <type> <vector2>;
-<vector2>	::= <literal> <vector2>;
 
 <return>	::= RETURN | RETURN <exp>;
 
@@ -177,7 +175,8 @@ ID : {ID}
 <exp7>		::= <exp7> <arith_low> <exp8> | <exp8>;
 <exp8>		::= <exp8> <arith_high> <exp9> | <exp9> ;
 <exp9> 		::= <negation> <exp10> | <exp10>;
-<exp10>		::= <literal> | ID | RB_OPEN  <exp> RB_CLOSE ;
+<exp10>		::= ID | RB_OPEN  <exp> RB_CLOSE | <literal>;
+
 
 <literal>	::= INT_LIT | FLOAT_LIT | BIN_LIT | HEX_LIT | STRING_LIT | TRUE | FALSE;	
 <relational>	::= GT | LT | GTE | LTE | EQ | NEQ; 
