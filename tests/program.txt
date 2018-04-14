@@ -37,4 +37,12 @@ funktion main() liefert leer zurück {
     a ***/
     zurückliefern;
   }
+  
+  ganze x[5] erhält hello(z[x + 1] + test(1));
+  
+  ganze neun erhält 9;
+  boolesche bitmask[neun];
+  für (ganze i erhält 0; i kleiner als neun; i++) {
+    bitmask[i] erhält 1 << i;
+  }
 }

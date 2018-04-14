@@ -85,11 +85,18 @@ ID : {ID}
 #NonTerminals
 <program>
 
-<open_close>
+<body>
 <function>
 
-<statement_r>
+<parameters>
+<parameter_rec>
+<parameter>
+
+<statements>
+<statement_rec>
 <statement>
+
+<comment>
 
 <block>
 <if>
@@ -105,11 +112,20 @@ ID : {ID}
 <assignment>
 <unary_assign>
 
-<id_r>
+<return>
+
+<identifiers>
+<id>
+
+<func_call>
+<args>
+<args_rec>
+
 <input>
 <output>
 
 <exp>
+<exp0>
 <exp1>
 <exp2>
 <exp3>
@@ -121,6 +137,8 @@ ID : {ID}
 <exp9>
 <exp10>
 
+<vector>
+
 <literal>
 <relational>
 <negation>
@@ -128,32 +146,46 @@ ID : {ID}
 <arith_low>
 <arith_high>
 <type>
-<parameters>
 #Grammar
 <program>	::= <program> <function> | <function>;
 
-<open_close>	::= CB_OPEN <statement_r> CB_CLOSE;
-<function>	::= FUNC ID RB_OPEN RB_CLOSE GIVES <type> BACK <open_close>;
+<body>		::= CB_OPEN <statements> CB_CLOSE;
+<function>	::= FUNC ID RB_OPEN <parameters> RB_CLOSE GIVES <type> BACK <body>;
 
-<statement_r>	::= <statement_r> <statement> | <statement>;
-<statement>	::= <block> | <instruction> END;
+<parameters>	::= <parameter_rec> | î;
+<parameter_rec> 	::= <parameter> COMMA <parameter_rec> | <parameter>;
+<parameter>	::= <type> <id>;
+
+<statements>	::= <statement_rec> | î;
+<statement_rec>	::= <statement> <statement_rec> | <statement>;
+<statement>	::= <block> | <comment> | <instruction> END;
+
+<comment>	::= COMMENT | M_COMMENT;
 
 <block>		::= <if> | <if_else> | <while> | <for> | <do_while>;
-<if>		::= IF RB_OPEN <exp> RB_CLOSE <open_close>;
-<if_else>		::= IF RB_OPEN <exp> RB_CLOSE <open_close> ELSE <open_close>;
-<for>		::= FOR RB_OPEN <declaration> END <exp> END <assignment> RB_CLOSE <open_close>;
-<while>		::= WHILE RB_OPEN <exp> RB_CLOSE <open_close>;
-<do_while>	::= DO <open_close> WHILE RB_OPEN <exp> RB_CLOSE END;
+<if>		::= IF RB_OPEN <exp> RB_CLOSE <body>;
+<if_else>		::= <if> ELSE <body>;
+<for>		::= FOR RB_OPEN <declaration> END <exp> END <assignment> RB_CLOSE <body>;
+<while>		::= WHILE RB_OPEN <exp> RB_CLOSE <body>;
+<do_while>	::= DO <body> WHILE RB_OPEN <exp> RB_CLOSE END;
 
-<instruction>	::= <assignment> | <declaration> | <input> | <output>;
+<instruction>	::= <assignment> | <declaration> | <input> | <output> | <return> | <exp>;
 <declaration>	::= <decl_assign> | <decl_only>;
 <decl_assign>	::= <type> <assignment>;
-<decl_only>	::= <type> <id_r>;
-<assignment>	::= ID ASSIGN <exp> | <unary_assign> ;
-<unary_assign>	::= ID INCREMENT | ID DECREMENT;
+<decl_only>	::= <type> <identifiers>;
+<assignment>	::= ID ASSIGN <exp> | ID <vector> ASSIGN <exp> | <unary_assign> ;
+<unary_assign>	::= ID INCREMENT | ID DECREMENT | ID <vector> INCREMENT | ID <vector> DECREMENT;
 
-<id_r>		::= ID COMMA <id_r> | ID;	
-<input>		::= READ ID;
+<return>		::= RETURN | RETURN <exp>;
+ 
+<identifiers>	::= <id> COMMA <identifiers> | <id>;
+<id>		::= ID | ID <vector>;
+
+<func_call>	::= ID RB_OPEN <args> RB_CLOSE;
+<args>		::= <args_rec> | î;
+<args_rec>	::= <exp> COMMA <args_rec> | <exp>;
+
+<input>		::= READ ID | READ ID <vector>;
 <output>		::= WRITE <exp>;
 
 <exp> 		::= <exp> OR <exp1> | <exp1>;
@@ -166,13 +198,14 @@ ID : {ID}
 <exp7>		::= <exp7> <arith_low> <exp8> | <exp8>;
 <exp8>		::= <exp8> <arith_high> <exp9> | <exp9> ;
 <exp9> 		::= <negation> <exp10> | <exp10>;
-<exp10>		::= <literal> | ID | RB_OPEN  <exp> RB_CLOSE ;
+<exp10>		::= ID | ID <vector> | RB_OPEN <exp> RB_CLOSE | <literal> | <func_call>;
 
-<literal>		::= INT_LIT | FLOAT_LIT | BIN_LIT | HEX_LIT | STRING_LIT;	
+<vector> 	::= SB_OPEN <exp> SB_CLOSE;
+
+<literal>		::= INT_LIT | FLOAT_LIT | BIN_LIT | HEX_LIT | STRING_LIT | TRUE | FALSE;	
 <relational>	::= GT | LT | GTE | LTE | EQ | NEQ; 
 <negation>	::= MINUS | BIT_NOT | NOT;
 <bitwise>	::= SHIFT_LEFT | SHIFT_RIGHT;
 <arith_low> 	::= PLUS | MINUS;
 <arith_high>	::= MULT | DIV | MOD;
 <type>		::= INT | FLOAT | STRING | BOOL | VOID | CHAR;
-<parameters> 	::= ID | ID <parameters> ;
