@@ -1,0 +1,70 @@
+package grammar;
+
+public interface Constants extends ScannerConstants, ParserConstants
+{
+    int EPSILON  = 0;
+    int DOLLAR   = 1;
+
+    int t_INT_LIT = 2;
+    int t_FLOAT_LIT = 3;
+    int t_BIN_LIT = 4;
+    int t_HEX_LIT = 5;
+    int t_STRING_LIT = 6;
+    int t_RB_OPEN = 7;
+    int t_RB_CLOSE = 8;
+    int t_SB_OPEN = 9;
+    int t_SB_CLOSE = 10;
+    int t_CB_OPEN = 11;
+    int t_CB_CLOSE = 12;
+    int t_INCREMENT = 13;
+    int t_DECREMENT = 14;
+    int t_PLUS = 15;
+    int t_MINUS = 16;
+    int t_DIV = 17;
+    int t_MULT = 18;
+    int t_COMMA = 19;
+    int t_MOD = 20;
+    int t_COLON = 21;
+    int t_END = 22;
+    int t_GT = 23;
+    int t_LT = 24;
+    int t_GTE = 25;
+    int t_LTE = 26;
+    int t_EQ = 27;
+    int t_NEQ = 28;
+    int t_ASSIGN = 29;
+    int t_M_COMMENT = 30;
+    int t_COMMENT = 31;
+    int t_SHIFT_RIGHT = 32;
+    int t_SHIFT_LEFT = 33;
+    int t_BIT_AND = 34;
+    int t_BIT_OR = 35;
+    int t_BIT_NOT = 36;
+    int t_BIT_XOR = 37;
+    int t_AND = 38;
+    int t_OR = 39;
+    int t_NOT = 40;
+    int t_VOID = 41;
+    int t_INT = 42;
+    int t_FLOAT = 43;
+    int t_STRING = 44;
+    int t_BOOL = 45;
+    int t_CHAR = 46;
+    int t_FUNC = 47;
+    int t_RETURN = 48;
+    int t_GIVES = 49;
+    int t_BACK = 50;
+    int t_IF = 51;
+    int t_ELSE = 52;
+    int t_FALSE = 53;
+    int t_TRUE = 54;
+    int t_WHILE = 55;
+    int t_FOR = 56;
+    int t_EACH = 57;
+    int t_OF = 58;
+    int t_DO = 59;
+    int t_READ = 60;
+    int t_WRITE = 61;
+    int t_ID = 62;
+
+}
