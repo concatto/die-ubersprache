@@ -8,7 +8,7 @@ SemanticName = Semantico
 Package = grammar
 ScannerCaseSensitive = true
 ScannerTable = Compact
-Input = Stream
+Input = String
 Parser = SLR
 #RegularDefinitions
 NUM: [0-9]
@@ -177,7 +177,7 @@ ID : {ID}
 <declaration>	::= <decl_assign> | <decl_only>;
 <decl_assign>	::= <type> <assignment>;
 <decl_only>	::= <type> <identifiers>;
-<assignment>	::= <id> ASSIGN <exp> <unary_assign> ;
+<assignment>	::= <id> ASSIGN <exp> | <unary_assign> ;
 <unary_assign>	::= <id> INCREMENT | <id> DECREMENT;
 
 <return>	::= RETURN | RETURN <exp>;

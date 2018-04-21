@@ -1,4 +1,4 @@
-funktion main() liefert leer zurück {
+﻿funktion main() liefert leer zurück {
   zeichenkette text erhält "Hello!";
   ganze num erhält 10;
   reelle floatNum erhält 5.5;
@@ -44,5 +44,11 @@ funktion main() liefert leer zurück {
   boolesche bitmask[neun];
   für (ganze i erhält 0; i kleiner als neun; i++) {
     bitmask[i] erhält 1 << i;
+  }
+
+  lesen bitmask[0];  
+
+  für jede (boolesche val von bitmask) {
+    schreiben val & 0b10111;
   }
 }
