@@ -8,7 +8,7 @@ SemanticName = Semantico
 Package = grammar
 ScannerCaseSensitive = true
 ScannerTable = Compact
-Input = Stream
+Input = String
 Parser = SLR
 #RegularDefinitions
 NUM: [0-9]
@@ -16,6 +16,7 @@ ID: [a-zA-Z_][a-zA-Z0-9_]*
 HEX: 0x[0-9A-F]+
 BIN: 0b[0-1]+
 STR: \"[^\"]*\"
+CHR: '.'
 COMMENT: / /.*
 M_COMMENT: /\*([^\*]|\*+[^\*/])*\*+/
 #Tokens
@@ -24,6 +25,7 @@ FLOAT_LIT: {NUM}*\.{NUM}+
 BIN_LIT : {BIN}
 HEX_LIT : {HEX}
 STRING_LIT : {STR}
+CHAR_LIT: {CHR}
 
 RB_OPEN : "("
 RB_CLOSE : ")"
@@ -166,7 +168,7 @@ ID : {ID}
 <comment>	::= COMMENT | M_COMMENT;
 
 <block>		::= <if> | <if_else> | <while> | <for> | <for_each> | <do_while>;
-<if>		::= IF RB_OPEN <exp> RB_CLOSE <body>;
+<if>		::= IF RB_OPEN <exp> #2001 RB_CLOSE <body>;
 <if_else>	::= <if> ELSE <body>;
 <for>		::= FOR RB_OPEN <declaration> END <exp> END <assignment> RB_CLOSE <body>;
 <for_each>	::= FOR EACH RB_OPEN <type> <id> OF <exp> RB_CLOSE <body>;
@@ -176,13 +178,13 @@ ID : {ID}
 <instruction>	::= <assignment>#500 | <declaration> | <input> | <output> | <return> | <exp>;
 <declaration>	::= <decl_assign>#501 | <decl_only>#502;
 <decl_assign>	::= <type> <assignment>;
-<decl_only>	::= <type> <identifiers>;
+<decl_only>	::= <type> <identifiers> #2000;
 <assignment>	::= <id> ASSIGN#3 <exp>#4 | <unary_assign> ;
 <unary_assign>	::= <id> INCREMENT | <id> DECREMENT;
 
 <return>	::= RETURN | RETURN <exp>;
  
-<identifiers>	::= <id> COMMA <identifiers>#2000 | <id>;
+<identifiers>	::= <id> COMMA <identifiers> | <id>;
 <id>		::= ID#2 | ID#2 <vector>;
 
 <func_call>	::= ID RB_OPEN <args> RB_CLOSE;
@@ -195,21 +197,21 @@ ID : {ID}
 <exp> 		::= <exp>#1234 OR <exp1> | <exp1>;
 <exp1>		::= <exp1> AND <exp2> | <exp2>;
 <exp2>		::= <exp2> BIT_OR <exp3> | <exp3>;
-<exp3>		::= <exp3> BIT_XOR <exp4> | <exp4>;
-<exp4>		::= <exp4> BIT_AND <exp5> | <exp5>;
-<exp5>		::= <exp5> <relational> <exp6> | <exp6>;
-<exp6>		::= <exp6> <bitwise> <exp7> | <exp7>;	
-<exp7>		::= <exp7> <arith_low> <exp8>#401 | <exp8>;
-<exp8>		::= <exp8> <arith_high> <exp9>#402 | <exp9> ;
+<exp3>		::= <exp3> BIT_XOR <exp4> #401 | <exp4>;
+<exp4>		::= <exp4> BIT_AND <exp5> #402 | <exp5>;
+<exp5>		::= <exp5> <relational> <exp6> #403 | <exp6>;
+<exp6>		::= <exp6> <bitwise> <exp7> #404 | <exp7>;	
+<exp7>		::= <exp7> <arith_low> <exp8> #405 | <exp8>;
+<exp8>		::= <exp8> <arith_high> <exp9> #406 | <exp9> ;
 <exp9> 		::= <negation> <exp10> | <exp10>;
-<exp10>		::= <id>#405 | RB_OPEN <exp> RB_CLOSE | <literal>#400 | <func_call>;
+<exp10>		::= <id> #701 | RB_OPEN <exp> RB_CLOSE | <literal> | <func_call>;
 
 <vector> 	::= SB_OPEN <exp> SB_CLOSE;
 
-<literal>	::= INT_LIT | FLOAT_LIT | BIN_LIT | HEX_LIT | STRING_LIT | TRUE | FALSE;	
+<literal>	::= INT_LIT #601 | FLOAT_LIT #602 | BIN_LIT #603 | HEX_LIT #604 | STRING_LIT #605 | TRUE #606 | FALSE #607;	
 <relational>	::= GT | LT | GTE | LTE | EQ | NEQ; 
 <negation>	::= MINUS | BIT_NOT | NOT;
 <bitwise>	::= SHIFT_LEFT | SHIFT_RIGHT;
-<arith_low> 	::= PLUS#300 | MINUS#300;
-<arith_high>	::= MULT#300 | DIV#300 | MOD#300;
+<arith_low> 	::= PLUS #300 | MINUS #300;
+<arith_high>	::= MULT #300 | DIV #300 | MOD #300;
 <type>		::= INT#1 | FLOAT#1 | STRING#1 | BOOL#1 | VOID#1 | CHAR#1;

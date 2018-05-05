@@ -33,5 +33,6 @@ public class Declarator {
 	
 	public void reset() {
 		currentType = null;
+		System.out.println("Type forgotten.");
 	}
 }
