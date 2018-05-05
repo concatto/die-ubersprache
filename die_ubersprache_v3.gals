@@ -8,7 +8,7 @@ SemanticName = Semantico
 Package = grammar
 ScannerCaseSensitive = true
 ScannerTable = Compact
-Input = String
+Input = Stream
 Parser = SLR
 #RegularDefinitions
 NUM: [0-9]
@@ -161,7 +161,7 @@ ID : {ID}
 
 <statements>	::= <statement_rec> | î;
 <statement_rec>	::= <statement> <statement_rec> | <statement>;
-<statement>	::= <block> | <comment> | <instruction> END;
+<statement>	::= <block> | <comment> | <instruction> END#200;
 
 <comment>	::= COMMENT | M_COMMENT;
 
@@ -173,36 +173,36 @@ ID : {ID}
 <while>		::= WHILE RB_OPEN <exp> RB_CLOSE <body>;
 <do_while>	::= DO <body> WHILE RB_OPEN <exp> RB_CLOSE END;
 
-<instruction>	::= <assignment> | <declaration> | <input> | <output> | <return> | <exp>;
-<declaration>	::= <decl_assign> | <decl_only>;
+<instruction>	::= <assignment>#500 | <declaration> | <input> | <output> | <return> | <exp>;
+<declaration>	::= <decl_assign>#501 | <decl_only>#502;
 <decl_assign>	::= <type> <assignment>;
 <decl_only>	::= <type> <identifiers>;
-<assignment>	::= <id> ASSIGN <exp> | <unary_assign> ;
+<assignment>	::= <id> ASSIGN#3 <exp>#4 | <unary_assign> ;
 <unary_assign>	::= <id> INCREMENT | <id> DECREMENT;
 
 <return>	::= RETURN | RETURN <exp>;
  
 <identifiers>	::= <id> COMMA <identifiers> | <id>;
-<id>		::= ID | ID <vector>;
+<id>		::= ID#2 | ID#2 <vector>;
 
 <func_call>	::= ID RB_OPEN <args> RB_CLOSE;
 <args>		::= <args_rec> | î;
 <args_rec>	::= <exp> COMMA <args_rec> | <exp>;
 
-<input>		::= READ <id>;
-<output>	::= WRITE <exp>;
+<input>		::= READ#901 <id>;
+<output>	::= WRITE#902 <exp>;
 
-<exp> 		::= <exp> OR <exp1> | <exp1>;
+<exp> 		::= <exp>#1234 OR <exp1> | <exp1>;
 <exp1>		::= <exp1> AND <exp2> | <exp2>;
 <exp2>		::= <exp2> BIT_OR <exp3> | <exp3>;
 <exp3>		::= <exp3> BIT_XOR <exp4> | <exp4>;
 <exp4>		::= <exp4> BIT_AND <exp5> | <exp5>;
 <exp5>		::= <exp5> <relational> <exp6> | <exp6>;
-<exp6>		::= <exp6> <bitwise> <exp7> | <exp7>;
-<exp7>		::= <exp7> <arith_low> <exp8> | <exp8>;
-<exp8>		::= <exp8> <arith_high> <exp9> | <exp9> ;
+<exp6>		::= <exp6> <bitwise> <exp7> | <exp7>;	
+<exp7>		::= <exp7> <arith_low> <exp8>#401 | <exp8>;
+<exp8>		::= <exp8> <arith_high> <exp9>#402 | <exp9> ;
 <exp9> 		::= <negation> <exp10> | <exp10>;
-<exp10>		::= <id> | RB_OPEN <exp> RB_CLOSE | <literal> | <func_call>;
+<exp10>		::= <id>#405 | RB_OPEN <exp> RB_CLOSE | <literal>#400 | <func_call>;
 
 <vector> 	::= SB_OPEN <exp> SB_CLOSE;
 
@@ -210,6 +210,6 @@ ID : {ID}
 <relational>	::= GT | LT | GTE | LTE | EQ | NEQ; 
 <negation>	::= MINUS | BIT_NOT | NOT;
 <bitwise>	::= SHIFT_LEFT | SHIFT_RIGHT;
-<arith_low> 	::= PLUS | MINUS;
-<arith_high>	::= MULT | DIV | MOD;
-<type>		::= INT | FLOAT | STRING | BOOL | VOID | CHAR;
+<arith_low> 	::= PLUS#300 | MINUS#300;
+<arith_high>	::= MULT#300 | DIV#300 | MOD#300;
+<type>		::= INT#1 | FLOAT#1 | STRING#1 | BOOL#1 | VOID#1 | CHAR#1;
