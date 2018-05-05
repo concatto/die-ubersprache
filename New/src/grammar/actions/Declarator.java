@@ -21,9 +21,17 @@ public class Declarator {
 		this.currentType = currentType;
 	}
 	
-	public void commit(boolean function) {
-		Symbol symbol = new Symbol(currentIdentifier, currentType, function);
+	public void commit() {
+		Symbol symbol = new Symbol(currentIdentifier, currentType, false, false, 0);
 		table.addSymbol(symbol);
-		
+		System.out.printf("Symbol added: %s %s\n", currentType, currentIdentifier);
+	}
+
+	public boolean hasType() {
+		return currentType != null;
+	}
+	
+	public void reset() {
+		currentType = null;
 	}
 }

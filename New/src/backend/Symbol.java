@@ -34,4 +34,12 @@ public class Symbol {
 	public int getScope() {
 		return scope;
 	}
+	
+	public void setInitialized(boolean initialized) {
+		this.initialized = initialized;
+	}
+
+	public void setScope(int scope) {
+		this.scope = scope;
+	}
 }

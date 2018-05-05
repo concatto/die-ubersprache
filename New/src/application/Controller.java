@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 
+import backend.SymbolTable;
 import grammar.Lexico;
 import grammar.Semantico;
 import grammar.Sintatico;
@@ -176,9 +177,11 @@ public class Controller {
 			edit_errors.setText("");
 			edit_console.setText("");
 			
-		  Lexico lex = new Lexico();
+			SymbolTable table = new SymbolTable();
+			
+			Lexico lex = new Lexico();
 			Sintatico sintatico = new Sintatico();
-			Semantico sem = new Semantico();
+			Semantico sem = new Semantico(table);
 			
 			lex.setInput(codeArea.getText());
 			
@@ -187,6 +190,7 @@ public class Controller {
 				edit_console.setText("done.");
 				
 			} catch (Exception e) {
+				e.printStackTrace();
 				edit_errors.setText(e.getMessage());
 				edit_console.setText("This code contain erros. see the errors screen");
 			} 
