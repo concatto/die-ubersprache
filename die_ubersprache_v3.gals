@@ -182,7 +182,7 @@ ID : {ID}
 
 <return>	::= RETURN | RETURN <exp>;
  
-<identifiers>	::= <id> COMMA <identifiers> | <id>;
+<identifiers>	::= <id> COMMA <identifiers>#2000 | <id>;
 <id>		::= ID#2 | ID#2 <vector>;
 
 <func_call>	::= ID RB_OPEN <args> RB_CLOSE;
