@@ -15,16 +15,18 @@ finished_seeing_table = False
 
 for line in content:
 	if saw_scanner_def and not finished_seeing_table:
-		if line.endswith(';'):
+		if '};' in line:
 			finished_seeing_table = True
 		else:
-			scanner_table.add(re.sub('[\{\}\,]', '', line))
+			scanner_table.append(re.sub('[\{\}\,]', '', line))
 	else:
-		if 'SCANNER_TABLE' in line:
+		if 'SCANNER_TABLE =' in line:
 			saw_scanner_def = True
-			new_content.add('    int[][] SCANNER_TABLE = new Importador().getTabela();')
+			new_content.append('    int[][] SCANNER_TABLE = new Importador().getTabela();')
 		else:
-			new_content.add(line)
+			new_content.append(line)
+			if 'package' in line:
+				new_content.append('import importador.Importador;\n')
 			
 with open('./src/%s/ScannerConstants.java' % package_name, 'w') as file:
 	file.writelines(new_content)

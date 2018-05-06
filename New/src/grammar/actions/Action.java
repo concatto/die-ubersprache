@@ -5,6 +5,7 @@ public enum Action {
 	STORE_ID,
 	PUSH_OPERATOR,
 	PUSH_LITERAL,
+	SET_ARRAY_SIZE,
 	EVALUATE,
 	COMPLETE_DECLARATION,
 	COMPLETE_ASSIGNMENT;
@@ -17,6 +18,8 @@ public enum Action {
 			return STORE_ID;
 		case 4:
 			return COMPLETE_ASSIGNMENT;
+		case 20:
+			return SET_ARRAY_SIZE;
 		case 601:
 		case 602:
 		case 605:
