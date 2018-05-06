@@ -111,15 +111,19 @@ ID : {ID}
 <do_while>
 
 <instruction>
+
 <declaration>
 <decl_assign>
 <decl_only>
+
+<identifiers>
+<id_decl>
+
 <assignment>
 <unary_assign>
 
 <return>
 
-<identifiers>
 <id>
 
 <func_call>
@@ -155,7 +159,7 @@ ID : {ID}
 <program>	::= <program> <function> | <function>;
 
 <body>		::= CB_OPEN <statements> CB_CLOSE;
-<function>	::= FUNC ID RB_OPEN <parameters> RB_CLOSE GIVES <type> BACK <body>;
+<function>	::= FUNC ID #32 RB_OPEN <parameters> RB_CLOSE GIVES <type> BACK #2000 <body>;
 
 <parameters>	::= <parameter_rec> | î;
 <parameter_rec> 	::= <parameter> COMMA <parameter_rec> | <parameter>;
@@ -163,38 +167,42 @@ ID : {ID}
 
 <statements>	::= <statement_rec> | î;
 <statement_rec>	::= <statement> <statement_rec> | <statement>;
-<statement>	::= <block> | <comment> | <instruction> END#200;
+<statement>	::= <block> | <comment> | <instruction> END;
 
 <comment>	::= COMMENT | M_COMMENT;
 
 <block>		::= <if> | <if_else> | <while> | <for> | <for_each> | <do_while>;
-<if>		::= IF RB_OPEN <exp> #2001 RB_CLOSE <body>;
+<if>		::= IF RB_OPEN <exp> RB_CLOSE <body>;
 <if_else>	::= <if> ELSE <body>;
 <for>		::= FOR RB_OPEN <declaration> END <exp> END <assignment> RB_CLOSE <body>;
 <for_each>	::= FOR EACH RB_OPEN <type> <id> OF <exp> RB_CLOSE <body>;
 <while>		::= WHILE RB_OPEN <exp> RB_CLOSE <body>;
 <do_while>	::= DO <body> WHILE RB_OPEN <exp> RB_CLOSE END;
 
-<instruction>	::= <assignment>#500 | <declaration> | <input> | <output> | <return> | <exp>;
-<declaration>	::= <decl_assign>#501 | <decl_only>#502;
-<decl_assign>	::= <type> <assignment>;
+<instruction>	::= <assignment> | <declaration> | <input> | <output> | <return> | <exp>;
+
+<declaration>	::= <decl_assign> | <decl_only>;
+<decl_assign>	::= <type> <id_decl> ASSIGN <exp> #2000 #4;
 <decl_only>	::= <type> <identifiers> #2000;
-<assignment>	::= <id> ASSIGN#3 <exp>#4 | <unary_assign> ;
+
+<identifiers>	::= <id_decl> COMMA <identifiers> | <id_decl>;
+<id_decl>	::= ID #31 | ID #31 SB_OPEN INT_LIT #50 SB_CLOSE;
+
+<assignment>	::= <id> ASSIGN <exp> #4 | <unary_assign> ;
 <unary_assign>	::= <id> INCREMENT | <id> DECREMENT;
 
 <return>	::= RETURN | RETURN <exp>;
- 
-<identifiers>	::= <id> COMMA <identifiers> | <id>;
-<id>		::= ID#2 | ID#2 <vector>;
+
+<id>		::= ID #30 | ID #30 <vector>;
 
 <func_call>	::= ID RB_OPEN <args> RB_CLOSE;
 <args>		::= <args_rec> | î;
 <args_rec>	::= <exp> COMMA <args_rec> | <exp>;
 
-<input>		::= READ#901 <id>;
-<output>	::= WRITE#902 <exp>;
+<input>		::= READ <id>;
+<output>	::= WRITE <exp>;
 
-<exp> 		::= <exp>#1234 OR <exp1> | <exp1>;
+<exp> 		::= <exp> OR <exp1> | <exp1>;
 <exp1>		::= <exp1> AND <exp2> | <exp2>;
 <exp2>		::= <exp2> BIT_OR <exp3> | <exp3>;
 <exp3>		::= <exp3> BIT_XOR <exp4> #401 | <exp4>;
@@ -204,14 +212,14 @@ ID : {ID}
 <exp7>		::= <exp7> <arith_low> <exp8> #405 | <exp8>;
 <exp8>		::= <exp8> <arith_high> <exp9> #406 | <exp9> ;
 <exp9> 		::= <negation> <exp10> | <exp10>;
-<exp10>		::= <id> #701 | RB_OPEN <exp> RB_CLOSE | <literal> | <func_call>;
+<exp10>		::= <id> #610 | RB_OPEN <exp> RB_CLOSE | <literal> | <func_call>;
 
 <vector> 	::= SB_OPEN <exp> SB_CLOSE;
 
-<literal>	::= INT_LIT #601 | FLOAT_LIT #602 | BIN_LIT #603 | HEX_LIT #604 | STRING_LIT #605 | TRUE #606 | FALSE #607;	
+<literal>	::= INT_LIT #601 | FLOAT_LIT #602 | BIN_LIT #603 | HEX_LIT #604 | STRING_LIT #605 | TRUE #606 | FALSE #607;
 <relational>	::= GT | LT | GTE | LTE | EQ | NEQ; 
 <negation>	::= MINUS | BIT_NOT | NOT;
 <bitwise>	::= SHIFT_LEFT | SHIFT_RIGHT;
 <arith_low> 	::= PLUS #300 | MINUS #300;
-<arith_high>	::= MULT #300 | DIV #300 | MOD #300;
-<type>		::= INT#1 | FLOAT#1 | STRING#1 | BOOL#1 | VOID#1 | CHAR#1;
+<arith_high>	::= MULT #300 | DIV #300 | MOD #300 ;
+<type>		::= INT #1 | FLOAT #1 | STRING #1 | BOOL #1 | VOID #1 | CHAR #1;

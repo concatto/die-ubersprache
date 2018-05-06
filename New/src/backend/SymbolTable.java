@@ -12,5 +12,12 @@ public class SymbolTable {
 	public Symbol getSymbol(String identifier) {		
 		return table.get(identifier);
 	}
+
+	public void print() {
+		System.out.println("Symbol table:");
+		table.values().forEach(symbol -> {
+			System.out.println(symbol);
+		});
+	}
 	
 }

@@ -2,7 +2,9 @@ package grammar.actions;
 
 public enum Action {
 	DECLARE_TYPE,
-	STORE_ID,
+	STORE_ID_FUNCTION,
+	STORE_ID_DECLARATION, // Also declaration + assignment
+	STORE_ID_GENERAL, // Includes assignment (separate from decl.)
 	PUSH_OPERATOR,
 	PUSH_LITERAL,
 	SET_ARRAY_SIZE,
@@ -14,11 +16,15 @@ public enum Action {
 		switch (code) {
 		case 1:
 			return DECLARE_TYPE;
-		case 2:
-			return STORE_ID;
+		case 30:
+			return STORE_ID_GENERAL;
+		case 31:
+			return STORE_ID_DECLARATION;
+		case 32:
+			return STORE_ID_FUNCTION;
 		case 4:
 			return COMPLETE_ASSIGNMENT;
-		case 20:
+		case 50:
 			return SET_ARRAY_SIZE;
 		case 601:
 		case 602:

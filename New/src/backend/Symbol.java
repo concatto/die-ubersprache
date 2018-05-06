@@ -5,13 +5,15 @@ public class Symbol {
 	private Type type;
 	private boolean function;
 	private boolean initialized;
+	private int size; // 1 for regular variables, n for arrays
 	private int scope;
 	
-	public Symbol(String identifier, Type type, boolean function, boolean initialized, int scope) {
+	public Symbol(String identifier, Type type, boolean function, boolean initialized, int size, int scope) {
 		this.identifier = identifier;
 		this.type = type;
 		this.function = function; 
 		this.initialized = initialized;
+		this.size = size;
 		this.scope = scope;
 	}
 
@@ -23,16 +25,24 @@ public class Symbol {
 		return identifier;
 	}
 	
-	public boolean getFunction() {
+	public boolean isFunction() {
 		return function;
 	}
 	
-	public Boolean getInitialized() {
+	public boolean isInitialized() {
 		return initialized;
 	}	
 	
 	public int getScope() {
 		return scope;
+	}
+	
+	public int getSize() {
+		return size;
+	}
+	
+	public boolean isArray() {
+		return size > 1;
 	}
 	
 	public void setInitialized(boolean initialized) {
@@ -41,5 +51,16 @@ public class Symbol {
 
 	public void setScope(int scope) {
 		this.scope = scope;
+	}
+	
+	public void setSize(int size) {
+		this.size = size;
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("%s %s. Func: %b; Arr: %b; Size: %d; Init: %b; Scope: %d",
+				type, identifier, function, isArray(), size, initialized, scope
+		);
 	}
 }

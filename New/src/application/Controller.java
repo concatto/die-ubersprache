@@ -97,6 +97,8 @@ public class Controller {
 			   "  ganze b erhält 20;",
 			   "  reelle c;",
 			   "  boolesche d;",
+			   "  zeichenkette strings[10];",
+			   "",
 			   "  a erhält 20 + 10 * 5;",
 			   "}"
 	   };
@@ -195,6 +197,7 @@ public class Controller {
 			
 			try {
 				sintatico.parse(lex, sem);
+				table.print();
 				edit_console.setText("done.");
 				
 			} catch (Exception e) {

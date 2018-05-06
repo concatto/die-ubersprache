@@ -7,7 +7,7 @@ import backend.TypeTable;
 import grammar.SemanticError;
 
 public class Assigner extends AbstractAction {
-	private Symbol currentSymbol;
+	private String currentIdentifier;
 	private static TypeTable assignmentTable = new TypeTable(
 			1, 1, 0, 1, 0, 0,
 			2, 2, 0, 0, 0, 0,
@@ -21,28 +21,27 @@ public class Assigner extends AbstractAction {
 		super(table);
 	}
 	
-	public void setCurrentSymbol(String identifier) throws SemanticError {
-		System.out.println("Searching " + identifier);
-		currentSymbol = table.getSymbol(identifier);
-		
-		if (currentSymbol == null) {
-			throw new SemanticError("Symbol not found: " + identifier);
-		}
-		
-		System.out.printf("Current symbol is now %s %s\n", currentSymbol.getType(), currentSymbol.getIdentifier());
+	public void setCurrentIdentifier(String identifier) {
+		this.currentIdentifier = identifier;
 	}
 	
 	public void commit(Type resultingType) throws SemanticError {
-		System.out.printf("The resulting type for %s %s is %s\n", currentSymbol.getType(), currentSymbol.getIdentifier(), resultingType);
+		Symbol symbol = table.getSymbol(currentIdentifier);
 		
-		Type result = assignmentTable.apply(currentSymbol.getType(), resultingType);
-		
-		if (result != currentSymbol.getType()) {
-			String message = "Type %s cannot be assigned to a symbol of type %s.";
-			
-			throw new SemanticError(String.format(message, resultingType, currentSymbol.getType()));
+		if (symbol == null) {
+			throw new SemanticError("Symbol not found: " + currentIdentifier);
 		}
 		
-		currentSymbol.setInitialized(true);
+		System.out.printf("The resulting type for %s %s is %s\n", symbol.getType(), symbol.getIdentifier(), resultingType);
+		
+		Type result = assignmentTable.apply(symbol.getType(), resultingType);
+		
+		if (result != symbol.getType()) {
+			String message = "Type %s cannot be assigned to a symbol of type %s.";
+			
+			throw new SemanticError(String.format(message, resultingType, symbol.getType()));
+		}
+		
+		symbol.setInitialized(true);
 	}
 }
