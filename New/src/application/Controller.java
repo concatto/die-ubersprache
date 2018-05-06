@@ -91,9 +91,17 @@ public class Controller {
 	        
 	      
 	        
-	 
+	   String[] lines = {
+			   "funktion main() liefert leer zurück {",
+			   "  ganze a;",
+			   "  ganze b erhält 20;",
+			   "  reelle c;",
+			   "  boolesche d;",
+			   "  a erhält 20 + 10 * 5;",
+			   "}"
+	   };
       
-	  // codeArea.replaceText(0, 0, UberspracheKeywords.sampleCode);
+	   codeArea.replaceText(0, 0, String.join("\n", lines));
 	   
        StackPane pane = new StackPane(codeArea);
       

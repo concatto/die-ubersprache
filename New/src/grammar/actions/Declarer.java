@@ -3,13 +3,14 @@ package grammar.actions;
 import backend.Symbol;
 import backend.SymbolTable;
 import backend.Type;
+import grammar.SemanticError;
 
-public class Declarator {
+public class Declarer {
 	private String currentIdentifier;
 	private Type currentType;
 	private SymbolTable table;
 	
-	public Declarator(SymbolTable table) {
+	public Declarer(SymbolTable table) {
 		this.table = table;
 	}
 	
@@ -21,8 +22,13 @@ public class Declarator {
 		this.currentType = currentType;
 	}
 	
-	public void commit() {
+	public void commit() throws SemanticError {
+		if (table.getSymbol(currentIdentifier) != null) {
+			throw new SemanticError(String.format("Symbol %s already exists.", currentIdentifier));
+		}
+		
 		Symbol symbol = new Symbol(currentIdentifier, currentType, false, false, 0);
+		
 		table.addSymbol(symbol);
 		System.out.printf("Symbol added: %s %s\n", currentType, currentIdentifier);
 	}
@@ -33,6 +39,5 @@ public class Declarator {
 	
 	public void reset() {
 		currentType = null;
-		System.out.println("Type forgotten.");
 	}
 }

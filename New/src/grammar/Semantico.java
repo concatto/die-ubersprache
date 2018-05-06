@@ -8,16 +8,16 @@ import backend.Type;
 import backend.operators.Operator;
 import grammar.actions.Action;
 import grammar.actions.Assigner;
-import grammar.actions.Declarator;
+import grammar.actions.Declarer;
 
 public class Semantico implements Constants
 {
-	private Declarator declarator;
+	private Declarer declarator;
 	private Assigner assigner;
 	private Evaluator evaluator = new Evaluator();
 	
 	public Semantico(SymbolTable table) {
-		this.declarator = new Declarator(table);
+		this.declarator = new Declarer(table);
 		this.assigner = new Assigner(table);
 	}
 	
@@ -53,17 +53,8 @@ public class Semantico implements Constants
         case PUSH_OPERATOR:
         	evaluator.pushOperator(Operator.fromLexeme(lexeme));
         	break;
-        case PUSH_INTEGER:
-        	evaluator.pushType(Type.INTEGER);
-        	break;
-        case PUSH_REAL:
-        	evaluator.pushType(Type.REAL);
-        	break;
-        case PUSH_STRING:
-        	evaluator.pushType(Type.STRING);
-        	break;
-        case PUSH_BOOLEAN:
-        	evaluator.pushType(Type.BOOLEAN);
+        case PUSH_LITERAL:
+        	evaluator.pushType(Type.deduceLiteral(code));
         	break;
         case EVALUATE:
         	evaluator.evaluate();

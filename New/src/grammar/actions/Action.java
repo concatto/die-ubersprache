@@ -4,10 +4,7 @@ public enum Action {
 	DECLARE_TYPE,
 	STORE_ID,
 	PUSH_OPERATOR,
-	PUSH_INTEGER,
-	PUSH_REAL,
-	PUSH_STRING,
-	PUSH_BOOLEAN,
+	PUSH_LITERAL,
 	EVALUATE,
 	COMPLETE_DECLARATION,
 	COMPLETE_ASSIGNMENT;
@@ -21,14 +18,11 @@ public enum Action {
 		case 4:
 			return COMPLETE_ASSIGNMENT;
 		case 601:
-			return PUSH_INTEGER;
 		case 602:
-			return PUSH_REAL;
 		case 605:
-			return PUSH_STRING;
 		case 606:
 		case 607:
-			return PUSH_BOOLEAN;
+			return PUSH_LITERAL;
 		case 401:
 		case 402:
 		case 403:

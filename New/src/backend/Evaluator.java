@@ -3,6 +3,7 @@ package backend;
 import java.util.Stack;
 
 import backend.operators.Operator;
+import grammar.SemanticError;
 
 public class Evaluator {
 	private Stack<Type> typeStack = new Stack<>();
@@ -20,7 +21,7 @@ public class Evaluator {
 		operatorStack.push(op);
 	}
 	
-	public void evaluate() {
+	public void evaluate() throws SemanticError {
 		Type a = typeStack.pop();
 		Type b = typeStack.pop();
 		Operator op = operatorStack.pop();
@@ -30,7 +31,7 @@ public class Evaluator {
 		Type result = op.verifyType(b, a);
 		System.out.println("Result: " + result);
 		if (result == null) {
-			System.out.println("Tipos incompativeis!");
+			throw new SemanticError(String.format("Type %s is incompatible with %s for operation %s.", b, a, op));
 		} else {
 			pushType(result);
 		}
