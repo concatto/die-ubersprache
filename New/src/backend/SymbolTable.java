@@ -2,6 +2,8 @@ package backend;
 
 import java.util.HashMap;
 
+import grammar.SemanticError;
+
 public class SymbolTable {
 	private HashMap<String, Symbol> table = new HashMap<>();
 	
@@ -9,8 +11,18 @@ public class SymbolTable {
 		table.put(symbol.getIdentifier(), symbol);
 	}
 
-	public Symbol getSymbol(String identifier) {		
-		return table.get(identifier);
+	public Symbol getSymbol(String identifier) throws SemanticError {
+		Symbol symbol = table.get(identifier);
+		
+		if (symbol == null) {
+			throw new SemanticError("Symbol not found: " + identifier);
+		}
+		
+		return symbol;
+	}
+	
+	public boolean exists(String identifier) {
+		return table.get(identifier) != null;
 	}
 
 	public void print() {

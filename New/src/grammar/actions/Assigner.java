@@ -7,7 +7,7 @@ import backend.TypeTable;
 import grammar.SemanticError;
 
 public class Assigner extends AbstractAction {
-	private String currentIdentifier;
+	private String identifier;
 	private static TypeTable assignmentTable = new TypeTable(
 			1, 1, 0, 1, 0, 0,
 			2, 2, 0, 0, 0, 0,
@@ -21,16 +21,12 @@ public class Assigner extends AbstractAction {
 		super(table);
 	}
 	
-	public void setCurrentIdentifier(String identifier) {
-		this.currentIdentifier = identifier;
+	public void setIdentifier(String identifier) throws SemanticError {
+		this.identifier = identifier;
 	}
 	
 	public void commit(Type resultingType) throws SemanticError {
-		Symbol symbol = table.getSymbol(currentIdentifier);
-		
-		if (symbol == null) {
-			throw new SemanticError("Symbol not found: " + currentIdentifier);
-		}
+		Symbol symbol = table.getSymbol(identifier);
 		
 		System.out.printf("The resulting type for %s %s is %s\n", symbol.getType(), symbol.getIdentifier(), resultingType);
 		

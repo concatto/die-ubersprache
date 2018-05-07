@@ -16,11 +16,9 @@ import grammar.Lexico;
 import grammar.Semantico;
 import grammar.Sintatico;
 import grammar.UberspracheKeywords;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -28,8 +26,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
@@ -52,7 +48,6 @@ public class Controller {
     
     @FXML
     private Button stop;
-    
 
     @FXML
     private VBox vboxCenter;
@@ -65,7 +60,11 @@ public class Controller {
     private boolean modifiedCode = false;
     
 	@FXML
-	public void initialize () {		
+	public void initialize () {
+		Logger.initialize(warning -> {
+			edit_errors.appendText(warning + "\n");
+		});
+		
 		run.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("play.png"), 30,30,true,true )));
 		stop.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("stop.png"), 20,20,true,true )));
 		stop.setPadding(new Insets(9,13,9,13));
@@ -92,14 +91,14 @@ public class Controller {
 	      
 	        
 	   String[] lines = {
-			   "funktion main() liefert leer zurück {",
+			   "funktion main() liefert leer zurï¿½ck {",
 			   "  ganze a;",
-			   "  ganze b erhält 20;",
+			   "  ganze b erhï¿½lt 20;",
 			   "  reelle c;",
 			   "  boolesche d;",
 			   "  zeichenkette strings[10];",
 			   "",
-			   "  a erhält 20 + 10 * 5;",
+			   "  a erhï¿½lt 20 + 10 * 5;",
 			   "}"
 	   };
       
@@ -131,7 +130,7 @@ public class Controller {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save code");
         fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Übersprache Quellcode", "*.uqc"));
+                new FileChooser.ExtensionFilter("ï¿½bersprache Quellcode", "*.uqc"));
         File file = fileChooser.showSaveDialog(Main.getStage());
         if (file != null) {
             try {
@@ -160,7 +159,7 @@ public class Controller {
            fileChooser.getExtensionFilters().addAll(
                new FileChooser.ExtensionFilter("All Type", "*.uqc","*.txt"),
                new FileChooser.ExtensionFilter("Text", "*.txt"),
-               new FileChooser.ExtensionFilter("Übersprache Quellcode", "*.uqc"));
+               new FileChooser.ExtensionFilter("ï¿½bersprache Quellcode", "*.uqc"));
            
     	
     	
