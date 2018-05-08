@@ -1,6 +1,9 @@
 package backend;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 import backend.operators.Operator;
 import grammar.SemanticError;
@@ -21,17 +24,22 @@ public class Evaluator {
 		operatorStack.push(op);
 	}
 	
-	public void evaluate() throws SemanticError {
-		Type a = typeStack.pop();
-		Type b = typeStack.pop();
+	public void evaluate(int nOperands) throws SemanticError {
+		List<Type> operands = new ArrayList<>(nOperands);
+		for (int i = 0; i < nOperands; i++) {
+			operands.add(0, typeStack.pop());
+		}
+		
 		Operator op = operatorStack.pop();
+		op.setOperands(operands);
 		
-		System.out.printf("Evaluating %s %s %s\n", b, op, a);
+		String phrase = operands.stream().map(Type::toString).collect(Collectors.joining(", ", "[", "]"));
+		System.out.printf("Evaluating %s with operand(s) %s\n", op, phrase);
 		
-		Type result = op.verifyType(b, a);
+		Type result = op.verify();
 		System.out.println("Result: " + result);
 		if (result == null) {
-			throw new SemanticError(String.format("Type %s is incompatible with %s for operation %s.", b, a, op));
+			throw new SemanticError(String.format("Operand(s) %s incompatible for operation %s.", phrase, op));
 		} else {
 			pushType(result);
 		}

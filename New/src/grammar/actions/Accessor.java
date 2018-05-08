@@ -29,7 +29,7 @@ public class Accessor extends AbstractAction {
     	}
 	}
 	
-	public Type access() throws SemanticError {
+	public Symbol access() throws SemanticError {
 		Symbol s = table.getSymbol(getCurrentIdentifier());
 		
 		if (!s.isInitialized() && !s.isParameter()) {
@@ -40,6 +40,6 @@ public class Accessor extends AbstractAction {
 		s.setUsed(true);
 		
 		identifiers.pop();
-		return s.getType();
+		return s;
 	}
 }

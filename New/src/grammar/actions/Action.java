@@ -8,33 +8,28 @@ public enum Action {
 	PUSH_OPERATOR,
 	PUSH_LITERAL,
 	SET_ARRAY_SIZE,
-	EVALUATE,
+	EVALUATE_BINARY,
+	EVALUATE_UNARY,
 	COMPLETE_DECLARATION,
 	COMPLETE_ASSIGNMENT,
 	RESET_DECLARER,
-	DESCEND_SCOPE,
-	ASCEND_SCOPE,
-	PUSH_SCOPE,
-	POP_SCOPE,
 	BEGIN_PARAMETERS,
 	ACCESS_POSITION,
-	STORE_ID_ASSIGNMENT,
 	ASSIGNMENT_FROM_DECLARATION,
 	ASSIGNMENT_FROM_ACCESS,
-	PUSH_SYMBOL;
+	PUSH_SYMBOL,
+	COMPLETE_FUNCTION_DECLARATION;
 	
 	public static Action parse(int code) {
 		switch (code) {
 		case 1:
 			return DECLARE_TYPE;
+		case 4:
+			return COMPLETE_ASSIGNMENT;
 		case 10:
 			return ASSIGNMENT_FROM_DECLARATION;
 		case 11:
 			return ASSIGNMENT_FROM_ACCESS;
-		case 15:
-			return DESCEND_SCOPE;
-		case 16:
-			return ASCEND_SCOPE;
 		case 25:
 			return ACCESS_POSITION;
 		case 30:
@@ -43,12 +38,8 @@ public enum Action {
 			return STORE_ID_DECLARATION;
 		case 32:
 			return STORE_ID_FUNCTION;
-		case 33:
-			return STORE_ID_ASSIGNMENT;
 		case 39:
 			return BEGIN_PARAMETERS;
-		case 4:
-			return COMPLETE_ASSIGNMENT;
 		case 50:
 			return SET_ARRAY_SIZE;
 		case 601:
@@ -68,13 +59,14 @@ public enum Action {
 		case 407:
 		case 408:
 		case 409:
-			return EVALUATE;
+			return EVALUATE_BINARY;
+		case 410:
+			return EVALUATE_UNARY;
 		case 300:
+		case 302:
 			return PUSH_OPERATOR;
-		case 555:
-			return PUSH_SCOPE;
-		case 556:
-			return POP_SCOPE;
+		case 1999:
+			return COMPLETE_FUNCTION_DECLARATION;
 		case 2000:
 			return COMPLETE_DECLARATION;
 		case 2001:

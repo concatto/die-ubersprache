@@ -1,99 +1,85 @@
 package grammar.actions;
 
-import java.util.Stack;
-
 import backend.Symbol;
 import backend.SymbolTable;
 import backend.Type;
 import grammar.SemanticError;
 
 public class Declarer {
-	private Stack<Symbol> symbols = new Stack<>();
-	private int scope = -1;
-	private int levelFromTop = 0;
+	private Symbol functionSymbol = new Symbol();
+	private Symbol currentSymbol;
 	private int parameterPosition = -1;
 	private SymbolTable table;
 	
 	public Declarer(SymbolTable table) {
 		this.table = table;
 		
-		pushScope();
+		reset();
 	}
 	
-	public void pushScope() {
-		symbols.push(new Symbol());
-		scope++;
+	public void setFunctionIdentifier(String identifier) {
+		functionSymbol.setIdentifier(identifier);
+		functionSymbol.setFunction(true);
 	}
 	
-	public void descend() {
-		levelFromTop++;
-	}
-	
-	public void ascend() {
-		levelFromTop--;
-	}
-	
-	public void popScope() {
-		symbols.pop();
+	public void commitFunction() throws SemanticError {
+		// The type is always stored in the general symbol
+		functionSymbol.setType(currentSymbol.getType());
+		
+		commitSymbol(functionSymbol);
+		
+		// Reset the symbol
+		functionSymbol = new Symbol();
 	}
 	
 	public void setCurrentIdentifier(String identifier) {
-		current().setIdentifier(identifier);
+		currentSymbol.setIdentifier(identifier);
 	}
 	
 	public String getCurrentIdentifier() {
-		return current().getIdentifier();
+		return currentSymbol.getIdentifier();
 	}
 	
 	public void setCurrentType(Type type) {
-		current().setType(type);
+		currentSymbol.setType(type);
 	}
 	
 	public void setFunction(boolean function) {
-		current().setFunction(function);
+		currentSymbol.setFunction(function);
 	}
 	
 	public void setArray(int size) {
-		current().setSize(size);
+		currentSymbol.setSize(size);
 	}
 	
 	public void setParameter(boolean parameter) {
-		current().setParameter(parameter);
-	}
-	
-	public boolean isCurrentlyFunction() {
-		return current().isFunction();
+		currentSymbol.setParameter(parameter);
 	}
 	
 	public void commit() throws SemanticError {
-		Symbol current = current();
-		
-		if (table.exists(current.getIdentifier())) {
-			throw new SemanticError(String.format("Symbol %s already exists.", current.getIdentifier()));
+		commitSymbol(currentSymbol);
+	}
+	
+	private void commitSymbol(Symbol symbol) throws SemanticError {		
+		if (table.exists(symbol.getIdentifier())) {
+			throw new SemanticError(String.format("Symbol %s already exists.", symbol.getIdentifier()));
 		}
 		
-		if (current.isParameter()) {
+		if (symbol.isParameter()) {
 			parameterPosition++;
 		} else {
 			parameterPosition = -1;
 		}
 		
-		Symbol symbol = new Symbol(
-				current.getIdentifier(), current.getType(),
-				current.isFunction(), false, current.isParameter(), current.getSize(),
-				scope - levelFromTop, symbols.size() - levelFromTop, parameterPosition
-		);
-		
-		table.addSymbol(symbol);
-		System.out.printf("Symbol added: %s %s\n", current.getType(), current.getIdentifier());
+		table.addSymbol(new Symbol(
+				symbol.getIdentifier(), symbol.getType(),
+				symbol.isFunction(), false, symbol.isParameter(), symbol.getSize(),
+				0, 0, parameterPosition
+		));
+		System.out.printf("Symbol added: %s %s\n", symbol.getType(), symbol.getIdentifier());
 	}
 	
 	public void reset() {
-		symbols.pop();
-		symbols.push(new Symbol());
-	}
-	
-	private Symbol current() {
-		return symbols.get(symbols.size() - 1 - levelFromTop);
+		currentSymbol = new Symbol();
 	}
 }

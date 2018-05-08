@@ -159,7 +159,7 @@ ID : {ID}
 <program>	::= <program> <function> | <function>;
 
 <body>		::= CB_OPEN <statements> CB_CLOSE;
-<function>	::= FUNC ID #32 RB_OPEN #555 #39 <parameters> #2001 RB_CLOSE GIVES #15 <type> #2000 #2001 #16 BACK <body> #556;
+<function>	::= FUNC ID #32 RB_OPEN #555 #39 <parameters> #2001 RB_CLOSE GIVES #15 <type> #1999 #2001 #16 BACK <body> #556;
 
 <parameters>	::= <parameter_rec> | î;
 <parameter_rec> 	::= <parameter>#40 COMMA <parameter_rec> | <parameter>#40;
@@ -182,7 +182,7 @@ ID : {ID}
 <instruction>	::= <assignment> | <declaration> #2001 | <input>#14 | <output>#15 | <return> | <exp>;
 
 <declaration>	::= <decl_assign> | <decl_only>;
-<decl_assign>	::= <type> <id_decl> ASSIGN #10 <exp> #2000 #4;
+<decl_assign>	::= <type> <id_decl> ASSIGN <exp> #2000 #10 #4;
 <decl_only>	::= <type> <identifiers>;
 
 <identifiers>	::= <id_decl> #2000 COMMA <identifiers> | <id_decl> #2000;

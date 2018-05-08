@@ -40,8 +40,7 @@ public class Semantico implements Constants
         	break;
         	
         case STORE_ID_FUNCTION:
-        	declarer.setCurrentIdentifier(lexeme);
-        	declarer.setFunction(true);
+        	declarer.setFunctionIdentifier(lexeme);
         	break;
         	
         case STORE_ID_DECLARATION:
@@ -64,6 +63,10 @@ public class Semantico implements Constants
         	declarer.commit();	
         	break;
         	
+        case COMPLETE_FUNCTION_DECLARATION:
+        	declarer.commitFunction();
+        	break;
+        	
         case COMPLETE_ASSIGNMENT:
         	assigner.commit(evaluator.pop());
         	break;
@@ -80,7 +83,7 @@ public class Semantico implements Constants
         	break;
         	
         case PUSH_SYMBOL:
-        	evaluator.pushType(accessor.access());
+        	evaluator.pushType(accessor.access().getType());
         	break;
         	
         case SET_ARRAY_SIZE:
@@ -91,24 +94,12 @@ public class Semantico implements Constants
         	accessor.testArrayAccess(evaluator.pop());
         	break;
         	
-        case EVALUATE:
-        	evaluator.evaluate();
+        case EVALUATE_BINARY:
+        	evaluator.evaluate(2);
         	break;
         	
-        case PUSH_SCOPE:
-        	declarer.pushScope();
-        	break;
-        	
-        case POP_SCOPE:
-        	declarer.popScope();
-        	break;
-        	
-        case ASCEND_SCOPE:
-        	declarer.ascend();
-        	break;
-        	
-        case DESCEND_SCOPE:
-        	declarer.descend();
+        case EVALUATE_UNARY:
+        	evaluator.evaluate(1);
         	break;
         
         case BEGIN_PARAMETERS:
