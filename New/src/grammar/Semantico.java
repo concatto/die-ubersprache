@@ -15,12 +15,14 @@ public class Semantico implements Constants
 	private Assigner assigner;
 	private Accessor accessor;
 	private Evaluator evaluator = new Evaluator();
+	private Scope scope;
 	//private Stack< Pair <String,Integer> > scopes = new Stack<>();
 
 	public Semantico(SymbolTable table) {
 		this.declarer = new Declarer(table);
 		this.assigner = new Assigner(table);
 		this.accessor = new Accessor(table);
+		this.scope = new Scope(table);
 		//this.scopes.push(new Pair(Global, 0))
 	}
 
@@ -109,10 +111,16 @@ public class Semantico implements Constants
         	break;
 
 				case OPEN_SCOPE:
-
+					scope.addScope(scope.getCurrentIdentifier());
 					break;
 				case CLOSE_SCOPE:
-					scopes.pull();
+					scope.removeScope();
+					break;
+				case OPEN_SCOPE_FUNCTION:
+					scope.addScope(scope.getCurrentIdentifier());
+					break;
+				case CLOSE_SCOPE_FUNCTION:
+					scope.removeScope();
 					break;
         }
     }
