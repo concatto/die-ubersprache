@@ -12,6 +12,18 @@ public class Symbol {
 	private int depth;
 	private int parameterPosition;
 	
+	public int getParameterPosition() {
+		return parameterPosition;
+	}
+
+	public void setParameterPosition(int parameterPosition) {
+		this.parameterPosition = parameterPosition;
+	}
+
+	public void setDepth(int depth) {
+		this.depth = depth;
+	}
+
 	public Symbol() {
 		this.size = 1;
 		this.function = false;

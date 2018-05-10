@@ -18,8 +18,12 @@ public enum Action {
 	ASSIGNMENT_FROM_DECLARATION,
 	ASSIGNMENT_FROM_ACCESS,
 	PUSH_SYMBOL,
-	COMPLETE_FUNCTION_DECLARATION;
-	
+	COMPLETE_FUNCTION_DECLARATION,
+	OPEN_SCOPE,
+	CLOSE_SCOPE,
+	OPEN_SCOPE_FUNCTION,
+	CLOSE_SCOPE_FUNCTION;
+
 	public static Action parse(int code) {
 		switch (code) {
 		case 1:
@@ -71,8 +75,12 @@ public enum Action {
 			return COMPLETE_DECLARATION;
 		case 2001:
 			return RESET_DECLARER;
+		case 3000:
+			return OPEN_SCOPE;
+		case 3001:
+			return CLOSE_SCOPE;
 		}
-		
+
 		return null;
 	}
 }

@@ -1,5 +1,6 @@
 package backend;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 import grammar.SemanticError;
@@ -22,6 +23,7 @@ public class SymbolTable {
 	}
 	
 	public boolean exists(String identifier) {
+		
 		return table.get(identifier) != null;
 	}
 
@@ -30,6 +32,10 @@ public class SymbolTable {
 		table.values().forEach(symbol -> {
 			System.out.println(symbol);
 		});
+	}
+	
+	public Collection<Symbol> getTable() {
+		return table.values();
 	}
 	
 }
