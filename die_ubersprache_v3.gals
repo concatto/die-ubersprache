@@ -209,10 +209,10 @@ ID : {ID}
 <exp4>		::= <exp4> BIT_AND <exp5> #405 | <exp5>;
 <exp5>		::= <exp5> <relational> <exp6> #406 | <exp6>;
 <exp6>		::= <exp6> <bitwise> <exp7> #407 | <exp7>;	
-<exp7>		::= <exp7> <arith_low> <exp8> #408 | <exp8>;
+<exp7>		::= <exp7> <arith_low> #777 <exp8> #408 | <exp8>;
 <exp8>		::= <exp8> <arith_high> <exp9> #409 | <exp9> ;
 <exp9> 		::= <negation> <exp10> #410| <exp10>;
-<exp10>		::= <id> #610 | RB_OPEN <exp> RB_CLOSE | <literal> | <func_call> #2103;
+<exp10>		::= <id> #610 | RB_OPEN <exp> RB_CLOSE | <literal>#666 | <func_call> #2103;
 
 <vector> 	::= SB_OPEN <exp>#25 SB_CLOSE;
 

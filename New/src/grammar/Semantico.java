@@ -1,6 +1,10 @@
 package grammar;
 
+import java.net.Socket;
+import java.util.Stack;
+
 import backend.Evaluator;
+import backend.Symbol;
 import backend.SymbolTable;
 import backend.Type;
 import backend.operators.Operator;
@@ -8,6 +12,7 @@ import grammar.actions.Accessor;
 import grammar.actions.Action;
 import grammar.actions.Assigner;
 import grammar.actions.Declarer;
+import javafx.util.Pair;
 
 public class Semantico implements Constants
 {
@@ -15,19 +20,21 @@ public class Semantico implements Constants
 	private Assigner assigner;
 	private Accessor accessor;
 	private Evaluator evaluator = new Evaluator();
-	private Scope scope;
-	//private Stack< Pair <String,Integer> > scopes = new Stack<>();
+	private Stack scopes = new Stack<>();
+	private int level = 0;
+	private int count = 0;
+	private SymbolTable table;
 
 	public Semantico(SymbolTable table) {
+		this.table = table;
 		this.declarer = new Declarer(table);
 		this.assigner = new Assigner(table);
 		this.accessor = new Accessor(table);
-		this.scope = new Scope(table);
-		//this.scopes.push(new Pair(Global, 0))
+
 	}
 
     public void executeAction(int code, Token token) throws SemanticError {
-        System.out.println("A��o #"+code+", Token: "+token);
+        System.out.println("Ação #"+code+", Token: "+token);
 
         Action action = Action.parse(code);
         String lexeme = token.getLexeme();
@@ -37,6 +44,7 @@ public class Semantico implements Constants
         }
 
         System.out.println(action);
+        
 
         switch (action) {
         case DECLARE_TYPE:
@@ -45,10 +53,14 @@ public class Semantico implements Constants
 
         case STORE_ID_FUNCTION:
         	declarer.setFunctionIdentifier(lexeme);
+        	scopes.push(level);
+        	count++;
+        	level++;
         	break;
 
         case STORE_ID_DECLARATION:
         	declarer.setCurrentIdentifier(lexeme);
+        	declarer.setCount(count);
         	break;
 
         case STORE_ID_GENERAL:
@@ -60,15 +72,21 @@ public class Semantico implements Constants
         	break;
 
         case ASSIGNMENT_FROM_ACCESS:
+        	Symbol s = table.search(accessor.getCurrentIdentifier(), scopes.size());
+        	
+        	if(s == null) {
+        		throw new SemanticError("A variavel "+accessor.getCurrentIdentifier()+" não foi declarada nesse escopo!");
+        	}
         	assigner.setIdentifier(accessor.getCurrentIdentifier());
         	break;
 
         case COMPLETE_DECLARATION:
-        	declarer.commit();
+        	declarer.setScope(level);
+        	declarer.commit(scopes.size());
         	break;
 
         case COMPLETE_FUNCTION_DECLARATION:
-        	declarer.commitFunction();
+        	declarer.commitFunction(scopes.size());
         	break;
 
         case COMPLETE_ASSIGNMENT:
@@ -109,22 +127,18 @@ public class Semantico implements Constants
         case BEGIN_PARAMETERS:
         	declarer.setParameter(true);
         	break;
-
-				case OPEN_SCOPE:
-					scope.addScope(scope.getCurrentIdentifier());
-					break;
-				case CLOSE_SCOPE:
-					scope.removeScope();
-					break;
-				case OPEN_SCOPE_FUNCTION:
-					scope.addScope(scope.getCurrentIdentifier());
-					break;
-				case CLOSE_SCOPE_FUNCTION:
-					scope.removeScope();
-					break;
+        	
+        case CLOSE_SCOPE:
+        	scopes.pop();
+        	break;
+        case OPEN_SCOPE:
+        	level++;
+        	count++;
+        	scopes.push(level);
+        	break;
         }
     }
 
-
+////////////////////////CORRETO!
 
 }

@@ -1,5 +1,6 @@
 package grammar.actions;
 
+import application.Logger;
 import backend.Symbol;
 import backend.SymbolTable;
 import backend.Type;
@@ -26,10 +27,18 @@ public class Assigner extends AbstractAction {
 		table.getSymbol(identifier);
 	}
 	
+	public Symbol getSymbol(String identifier) throws SemanticError {
+		return table.getSymbol(identifier);
+	}
+	
 	public void commit(Type resultingType) throws SemanticError {
 		Symbol symbol = table.getSymbol(identifier);
 		
 		System.out.printf("The resulting type for %s %s is %s\n", symbol.getType(), symbol.getIdentifier(), resultingType);
+		
+		if (resultingType == Type.REAL && symbol.getType() == Type.INTEGER) {
+			Logger.warn(String.format("Precision loss when assigning to symbol %s.", symbol.getIdentifier()));
+		}
 		
 		assignmentOperator.setOperands(symbol.getType(), resultingType);
 		Type result = assignmentOperator.verify();

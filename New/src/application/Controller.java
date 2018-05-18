@@ -69,8 +69,40 @@ public class Controller {
     
     private boolean modifiedCode = false;
     
+    private TableView<Symbol> tabela = new TableView<>();
+
+	private TableColumn<Symbol, String> colum1;
+
+	private TableColumn<Symbol, String> colum2;
+
+	private TableColumn<Symbol, String> colum3;
+
+	private TableColumn<Symbol, String> colum4;
+
+	private TableColumn<Symbol, String> colum5;
+
+	private TableColumn<Symbol, String> colum6;
+
+	private TableColumn<Symbol, String> colum7;
+
+	private TableColumn<Symbol, String> colum8;
+
+	private TableColumn<Symbol, String> colum9;
+
+	private TableColumn<Symbol, String> colum10;
+	
+	Scene s;
+	Stage stage;
+	
+
+	
 	@FXML
 	public void initialize () {
+		 s = new Scene(tabela);
+		 stage = new Stage();
+		 stage.setWidth(818);
+		    stage.setHeight(500);
+		    stage.setScene(s);
 		Logger.initialize(warning -> {
 			edit_errors.appendText(warning + "\n");
 		});
@@ -99,9 +131,13 @@ public class Controller {
 	        });	      
 	        
 	   String[] lines = {
-			   "funktion main() liefert leer zur�ck {",
+			   "funktion main() liefert leer zurück {",
 			   "  ganze a;",
 			   "",
+			   "  falls (1) {",
+			   "    ganze b;",
+			   "  }",
+			   "  b erhält 5;",
 			   "}"
 	   };
       
@@ -114,6 +150,40 @@ public class Controller {
        
         
         VBox.setVgrow(pane, Priority.ALWAYS);		
+        
+        
+        colum1 = new TableColumn<>("identifier");
+        colum1.setCellValueFactory(
+                new PropertyValueFactory<Symbol, String>("identifier"));
+        colum2 = new TableColumn<>("type");
+        colum2.setCellValueFactory(
+                new PropertyValueFactory<Symbol, String>("type"));
+        colum3 = new TableColumn<>("function");
+        colum3.setCellValueFactory(
+                new PropertyValueFactory<Symbol, String>("function"));
+        colum4 = new TableColumn<>("initialized");
+        colum4.setCellValueFactory(
+                new PropertyValueFactory<Symbol, String>("initialized"));
+        colum5 = new TableColumn<>("parameter");
+        colum5.setCellValueFactory(
+                new PropertyValueFactory<Symbol, String>("parameter"));
+        colum6 = new TableColumn<>("used");
+        colum6.setCellValueFactory(
+                new PropertyValueFactory<Symbol, String>("used"));
+        colum7 = new TableColumn<>("size");
+        colum7.setCellValueFactory(
+                new PropertyValueFactory<Symbol, String>("size"));
+        colum8 = new TableColumn<>("scope");
+        colum8.setCellValueFactory(
+                new PropertyValueFactory<Symbol, String>("scope"));
+        colum9 = new TableColumn<>("depth");
+        colum9.setCellValueFactory(
+                new PropertyValueFactory<Symbol, String>("depth"));
+        colum10 = new TableColumn<>("parameterPosition");
+        colum10.setCellValueFactory(
+                new PropertyValueFactory<Symbol, String>("parameterPosition"));
+        
+        tabela.getColumns().addAll(colum1, colum2, colum3,colum4,colum5,colum6,colum7,colum8,colum9,colum10);
 	}
 	
 	
@@ -184,28 +254,7 @@ public class Controller {
         }
     }	
     
-    private TableView<Symbol> tabela = new TableView<>();
 
-	private TableColumn<Symbol, String> colum1;
-
-	private TableColumn<Symbol, String> colum2;
-
-	private TableColumn<Symbol, String> colum3;
-
-	private TableColumn<Symbol, String> colum4;
-
-	private TableColumn<Symbol, String> colum5;
-
-	private TableColumn<Symbol, String> colum6;
-
-	private TableColumn<Symbol, String> colum7;
-
-	private TableColumn<Symbol, String> colum8;
-
-	private TableColumn<Symbol, String> colum9;
-
-	private TableColumn<Symbol, String> colum10;
-	  @SuppressWarnings("unchecked")
 	@FXML
 	    void onClick(ActionEvent event) {
 		  
@@ -213,48 +262,6 @@ public class Controller {
 			edit_console.setText("");
 		
 			
-
-
-	        colum1 = new TableColumn<>("identifier");
-	        colum1.setCellValueFactory(
-	                new PropertyValueFactory<Symbol, String>("identifier"));
-	        colum2 = new TableColumn<>("type");
-	        colum2.setCellValueFactory(
-	                new PropertyValueFactory<Symbol, String>("type"));
-	        colum3 = new TableColumn<>("function");
-	        colum3.setCellValueFactory(
-	                new PropertyValueFactory<Symbol, String>("function"));
-	        colum4 = new TableColumn<>("initialized");
-	        colum4.setCellValueFactory(
-	                new PropertyValueFactory<Symbol, String>("initialized"));
-	        colum5 = new TableColumn<>("parameter");
-	        colum5.setCellValueFactory(
-	                new PropertyValueFactory<Symbol, String>("parameter"));
-	        colum6 = new TableColumn<>("used");
-	        colum6.setCellValueFactory(
-	                new PropertyValueFactory<Symbol, String>("used"));
-	        colum7 = new TableColumn<>("size");
-	        colum7.setCellValueFactory(
-	                new PropertyValueFactory<Symbol, String>("size"));
-	        colum8 = new TableColumn<>("scope");
-	        colum8.setCellValueFactory(
-	                new PropertyValueFactory<Symbol, String>("scope"));
-	        colum9 = new TableColumn<>("depth");
-	        colum9.setCellValueFactory(
-	                new PropertyValueFactory<Symbol, String>("depth"));
-	        colum10 = new TableColumn<>("parameterPosition");
-	        colum10.setCellValueFactory(
-	                new PropertyValueFactory<Symbol, String>("parameterPosition"));
-	        
-	        tabela.getColumns().addAll(colum1, colum2, colum3,colum4,colum5,colum6,colum7,colum8,colum9,colum10);
-	 
-	      
-			Scene s = new Scene(tabela);
-			Stage stage = new Stage();
-			stage.setWidth(818);
-	        stage.setHeight(500);
-	 
-			stage.setScene(s);
 			stage.show();
 		
 			SymbolTable table = new SymbolTable();
@@ -267,10 +274,15 @@ public class Controller {
 			
 			try {
 				sintatico.parse(lex, sem);
+				
+				// If it's not a function and it's not being used, warn the user
+				table.getTable().stream().filter(s -> !s.isUsed() && !s.isFunction()).forEach(s -> {
+					Logger.warn(String.format("Symbol %s %s is not being used.", s.getType(), s.getIdentifier()));
+				});
+				
+				table.print();
+				
 				  final ObservableList<Symbol> data = FXCollections.observableArrayList(table.getTable());
-				  for (Symbol symbol : data) {
-					System.out.println(symbol);
-				}
 				  tabela.setItems(data);
 				//table.print();
 				edit_console.setText("done.");

@@ -11,6 +11,7 @@ public class Symbol {
 	private int scope;
 	private int depth;
 	private int parameterPosition;
+	private int count;
 
 	public int getParameterPosition() {
 		return parameterPosition;
@@ -123,5 +124,15 @@ public class Symbol {
 		return String.format("%s %s. Func: %b; Arr: %b; Size: %d; Init: %b; Used: %b; Param: %b; Scope: %d; Depth: %d; P. pos: %d",
 				type, identifier, function, isArray(), size, initialized, used, parameter, scope, depth, parameterPosition
 		);
+	}
+
+	public void setCount(int count) {
+		this.count = count;
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public int getCount() {
+		return count;
 	}
 }
