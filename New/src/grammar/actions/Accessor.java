@@ -32,8 +32,10 @@ public class Accessor extends AbstractAction {
 	public Symbol access() throws SemanticError {
 		Symbol s = table.getSymbol(getCurrentIdentifier());
 		
+		System.out.println("here!");
+		
 		if (!s.isInitialized() && !s.isParameter()) {
-			System.out.println("here!");
+			//System.out.println("here!");
 			Logger.warn(String.format("Symbol %s was used without being initialized.", s.getIdentifier()));
 		}
 		

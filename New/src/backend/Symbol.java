@@ -31,7 +31,6 @@ public class Symbol {
 		this.initialized = false;
 		this.used = false;
 		this.parameter = false;
-		this.used = false;
 	}
 
 	public Symbol(String identifier, Type type, boolean function, boolean initialized, boolean used, boolean parameter, int size, int scope, int depth, int parameterPosition) {
@@ -113,6 +112,9 @@ public class Symbol {
 
 	public void setUsed(boolean used) {
 		this.used = used;
+		System.out.println("This one is now used \\/");
+		System.out.println(this.toString());
+		
 	}
 
 	public int getDepth() {
