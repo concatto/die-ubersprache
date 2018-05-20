@@ -136,9 +136,18 @@ public class Controller {
 			   "",
 			   "  falls (1) {",
 			   "    ganze b;",
+			   "    a erhält 5;",
 			   "  }",
-			   "  b erhält 5;",
-			   "}"
+			   "  //should fail",
+			   "  //b erhält 5;",
+			   "  ganze b erhält 2 + a;",
+			   "}",
+			   "",
+			   "funktion test(ganze a, ganze b) liefert leer zurück {",
+			   "  ganze c erhält 2 + a;",
+			   "  //should fail",
+			   "  //ganze a;",
+			   "}",
 	   };
       
 	   codeArea.replaceText(0, 0, String.join("\n", lines));

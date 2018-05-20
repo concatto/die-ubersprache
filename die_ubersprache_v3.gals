@@ -43,13 +43,13 @@ COMMA : ","
 MOD: "%" 
 COLON : ":"
 END : ";"
-GT : "grï¿½sser als"
+GT : "grösser als"
 LT : "kleiner als"
-GTE : "grï¿½sser oder gleich"
+GTE : "grösser oder gleich"
 LTE : "kleiner oder gleich"
 EQ : "gleich"
 NEQ : "ungleich"
-ASSIGN : "erhï¿½lt"
+ASSIGN : "erhält"
 M_COMMENT : {M_COMMENT}
 COMMENT : {COMMENT}
 SHIFT_RIGHT: ">>"
@@ -68,15 +68,15 @@ STRING : "zeichenkette" //string
 BOOL : "boolesche" //boolean
 CHAR: "zeichen" //char
 FUNC : "funktion" //function
-RETURN : "zurï¿½ckliefern" //return
+RETURN : "zurückliefern" //return
 GIVES : "liefert" //gives
-BACK : "zurï¿½ck" //back, as in: gives int back; liefert ganze zurÃ¼ck
+BACK : "zurück" //back, as in: gives int back; liefert ganze zurück
 IF : "falls" //if
 ELSE : "sonst" //else
 FALSE : "falsch" //false
 TRUE: "wahr" //true
-WHILE : "wï¿½hrend" //while
-FOR : "fï¿½r" //for
+WHILE : "während" //while
+FOR : "für" //for
 EACH : "jede"
 OF : "von"
 DO : "tun" //do
@@ -158,14 +158,14 @@ ID : {ID}
 #Grammar
 <program>	::= <program> <function> | <function>;
 
-<body>		::= CB_OPEN <statements> CB_CLOSE;
+<body>		::= CB_OPEN <statements> CB_CLOSE #1300;
 <function>	::= FUNC ID #32 RB_OPEN #555 #39 <parameters> #2001 RB_CLOSE GIVES #15 <type> #1999 #2001 #16 BACK <body> #556;
 
-<parameters>	::= <parameter_rec> | Ã®;
+<parameters>	::= <parameter_rec> | î;
 <parameter_rec> 	::= <parameter>#40 COMMA <parameter_rec> | <parameter>#40;
 <parameter>	::= <type> <id_decl> #2000;
 
-<statements>	::= <statement_rec> | Ã®;
+<statements>	::= <statement_rec> | î;
 <statement_rec>	::= <statement> <statement_rec> | <statement>;
 <statement>	::= <block> | <comment> | <instruction> END;
 
@@ -196,7 +196,7 @@ ID : {ID}
 <id>		::= ID #30 | ID #30 <vector>;
 
 <func_call>	::= ID#2100 RB_OPEN <args>#2101 RB_CLOSE#2102;
-<args>		::= <args_rec> | Ã®;
+<args>		::= <args_rec> | î;
 <args_rec>	::= <exp> COMMA <args_rec> | <exp>;
 
 <input>		::= READ <id>;
