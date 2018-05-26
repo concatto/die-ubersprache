@@ -6,13 +6,14 @@ import application.Logger;
 import backend.Symbol;
 import backend.SymbolTable;
 import backend.Type;
+import backend.generator.AssemblyProgram;
 import grammar.SemanticError;
 
 public class Accessor extends AbstractAction {
 	private Stack<String> identifiers = new Stack<>();
 	
-	public Accessor(SymbolTable table) {
-		super(table);
+	public Accessor(SymbolTable table, AssemblyProgram program) {
+		super(table, program);
 	}
 	
 	public void pushIdentifier(String identifier) {

@@ -1,5 +1,6 @@
 package backend.operators;
 
+import backend.LanguageData;
 import backend.Type;
 
 public class BinaryOperator extends Operator {
@@ -9,9 +10,9 @@ public class BinaryOperator extends Operator {
 
 	@Override
 	public Type verify() {
-		Type a = operands.get(0);
-		Type b = operands.get(1);
+		LanguageData a = operands.get(0);
+		LanguageData b = operands.get(1);
 		
-		return table.get(a.ordinal(), b.ordinal());
+		return table.get(a.getType().ordinal(), b.getType().ordinal());
 	}
 }

@@ -4,6 +4,7 @@ import backend.Evaluator;
 import backend.ScopeManager;
 import backend.SymbolTable;
 import backend.Type;
+import backend.generator.AssemblyProgram;
 import backend.operators.Operator;
 import grammar.actions.Accessor;
 import grammar.actions.Action;
@@ -18,12 +19,14 @@ public class Semantico implements Constants
 	private Evaluator evaluator = new Evaluator();
 	private SymbolTable table;
 	private ScopeManager scopeManager;
+	private AssemblyProgram program;
 
-	public Semantico(SymbolTable table) {
+	public Semantico(SymbolTable table, AssemblyProgram program) {
 		this.table = table;
-		this.declarer = new Declarer(table);
-		this.assigner = new Assigner(table);
-		this.accessor = new Accessor(table);
+		this.program = program;
+		this.declarer = new Declarer(table, program);
+		this.assigner = new Assigner(table, program);
+		this.accessor = new Accessor(table, program);
 
 		scopeManager = new ScopeManager();
 		this.table.setScopeManager(scopeManager);
@@ -73,6 +76,7 @@ public class Semantico implements Constants
 
         case COMPLETE_DECLARATION:
         	declarer.setScope(scopeManager.getTotalScopes());
+        	declarer.setDepth(scopeManager.getDepth());
         	declarer.commit();
         	break;
 
@@ -82,7 +86,7 @@ public class Semantico implements Constants
         	break;
 
         case COMPLETE_ASSIGNMENT:
-        	assigner.commit(evaluator.pop());
+        	assigner.commit(evaluator.pop().getType());
         	break;
 
         case RESET_DECLARER:
@@ -93,11 +97,11 @@ public class Semantico implements Constants
         	break;
 
         case PUSH_LITERAL:
-        	evaluator.pushType(Type.deduceLiteral(code));
+        	evaluator.pushLiteral(code, lexeme);
         	break;
 
         case PUSH_SYMBOL:
-        	evaluator.pushType(accessor.access().getType());
+        	evaluator.pushSymbol(accessor.access());
         	break;
 
         case SET_ARRAY_SIZE:
@@ -105,7 +109,7 @@ public class Semantico implements Constants
         	break;
 
         case ACCESS_POSITION:
-        	accessor.testArrayAccess(evaluator.pop());
+        	accessor.testArrayAccess(evaluator.pop().getType());
         	break;
 
         case EVALUATE_BINARY:

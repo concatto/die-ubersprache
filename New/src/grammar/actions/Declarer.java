@@ -3,16 +3,16 @@ package grammar.actions;
 import backend.Symbol;
 import backend.SymbolTable;
 import backend.Type;
+import backend.generator.AssemblyProgram;
 import grammar.SemanticError;
 
-public class Declarer {
+public class Declarer extends AbstractAction {
 	private Symbol functionSymbol = new Symbol();
 	private Symbol currentSymbol;
 	private int parameterPosition = -1;
-	private SymbolTable table;
 
-	public Declarer(SymbolTable table) {
-		this.table = table;
+	public Declarer(SymbolTable table, AssemblyProgram program) {
+		super(table, program);
 		reset();
 	}
 
@@ -56,7 +56,11 @@ public class Declarer {
 
 	public void setScope(int scope) {
 		currentSymbol.setScope(scope);
-	}	
+	}
+	
+	public void setDepth(int depth) {
+		currentSymbol.setDepth(depth);
+	}
 	
 	public void setParameter(boolean parameter) {
 		currentSymbol.setParameter(parameter);
@@ -80,7 +84,7 @@ public class Declarer {
 		Symbol toBeAdded = new Symbol(
 				symbol.getIdentifier(), symbol.getType(), symbol.isFunction(),
 				symbol.isInitialized(), symbol.isUsed(), symbol.isParameter(), symbol.getSize(),
-				symbol.getScope(), 0, parameterPosition
+				symbol.getScope(), symbol.getDepth(), parameterPosition
 		);
 		
 		table.addSymbol(toBeAdded);

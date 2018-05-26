@@ -9,15 +9,15 @@ import backend.operators.Operator;
 import grammar.SemanticError;
 
 public class Evaluator {
-	private Stack<Type> typeStack = new Stack<>();
+	private Stack<LanguageData> dataStack = new Stack<>();
 	private Stack<Operator> operatorStack = new Stack<>();
 	
 	public Evaluator() {
 		
 	}
 	
-	public void pushType(Type type) {
-		typeStack.push(type);
+	public void push(LanguageData data) {
+		dataStack.push(data);
 	}
 	
 	public void pushOperator(Operator op) {
@@ -25,15 +25,15 @@ public class Evaluator {
 	}
 	
 	public void evaluate(int nOperands) throws SemanticError {
-		List<Type> operands = new ArrayList<>(nOperands);
+		List<LanguageData> operands = new ArrayList<>(nOperands);
 		for (int i = 0; i < nOperands; i++) {
-			operands.add(0, typeStack.pop());
+			operands.add(0, dataStack.pop());
 		}
 		
 		Operator op = operatorStack.pop();
 		op.setOperands(operands);
 		
-		String phrase = operands.stream().map(Type::toString).collect(Collectors.joining(", ", "[", "]"));
+		String phrase = operands.stream().map(v -> v.getType().toString()).collect(Collectors.joining(", ", "[", "]"));
 		System.out.printf("Evaluating %s with operand(s) %s\n", op, phrase);
 		
 		Type result = op.verify();
@@ -41,11 +41,22 @@ public class Evaluator {
 		if (result == null) {
 			throw new SemanticError(String.format("Operand(s) %s incompatible for operation %s.", phrase, op));
 		} else {
-			pushType(result);
+			push(new Temporary(result));
 		}
 	}
 	
-	public Type pop() {
-		return typeStack.pop();
+	public LanguageData pop() {
+		return dataStack.pop();
+	}
+
+	public void pushLiteral(int code, String lexeme) {
+		Type type = Type.deduceLiteral(code);
+		
+		// Assume everything is an integer
+		push(new Literal<Integer>(type, Integer.parseInt(lexeme)));
+	}
+
+	public void pushSymbol(Symbol symbol) {
+		push(symbol);		
 	}
 }

@@ -46,7 +46,7 @@ public class SymbolTable {
 		});
 	}
 	
-	public Collection<Symbol> getTable() {
+	public Collection<Symbol> getSymbols() {
 		return table;
 	}
 	
