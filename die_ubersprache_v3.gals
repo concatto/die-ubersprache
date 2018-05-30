@@ -8,7 +8,7 @@ SemanticName = Semantico
 Package = grammar
 ScannerCaseSensitive = true
 ScannerTable = Compact
-Input = String
+Input = Stream
 Parser = SLR
 #RegularDefinitions
 NUM: [0-9]
@@ -159,13 +159,13 @@ ID : {ID}
 <program>	::= <program> <function> | <function>;
 
 <body>		::= CB_OPEN <statements> CB_CLOSE;
-<function>	::= FUNC ID #32 RB_OPEN #555 #39 <parameters> #2001 RB_CLOSE GIVES #15 <type> #1999 #2001 #16 BACK <body> #556;
+<function>	::= 	FUNC ID #32 RB_OPEN <parameters> RB_CLOSE GIVES <type> BACK #2000 <body>;
 
-<parameters>	::= <parameter_rec> | î;
+<parameters>	::= <parameter_rec> | �;
 <parameter_rec> 	::= <parameter>#40 COMMA <parameter_rec> | <parameter>#40;
-<parameter>	::= <type> <id_decl> #2000;
+<parameter>	::= <type> <id>;
 
-<statements>	::= <statement_rec> | î;
+<statements>	::= <statement_rec> | �;
 <statement_rec>	::= <statement> <statement_rec> | <statement>;
 <statement>	::= <block> | <comment> | <instruction> END;
 
@@ -173,34 +173,34 @@ ID : {ID}
 
 <block>		::= <if> | <if_else> | <while> | <for> | <for_each> | <do_while>;
 <if>		::= IF RB_OPEN <exp>#60 RB_CLOSE#1200 <body>;
-<if_else>		::= <if> ELSE#1300 <body>;
+<if_else>	::= <if> ELSE#1300 <body>;
 <for>		::= FOR RB_OPEN <declaration>#701 END <exp>#702 END <assignment>#703 RB_CLOSE #700 <body>;
 <for_each>	::= FOR EACH RB_OPEN <type>#801 <id>#802 OF <exp>#803 RB_CLOSE#800 <body>;
 <while>		::= WHILE RB_OPEN <exp>#60 RB_CLOSE#900 <body>;
 <do_while>	::= DO#1100 <body> WHILE RB_OPEN <exp>#60 RB_CLOSE END;
 
-<instruction>	::= <assignment> | <declaration> #2001 | <input>#14 | <output>#15 | <return> | <exp>;
+<instruction>	::= <assignment> | <declaration> | <input>#14 | <output>#15 | <return> | <exp>;
 
 <declaration>	::= <decl_assign> | <decl_only>;
-<decl_assign>	::= <type> <id_decl> ASSIGN <exp> #2000 #10 #4;
-<decl_only>	::= <type> <identifiers>;
+<decl_assign>	::= <type> <id_decl> ASSIGN <exp> #2000 #4;
+<decl_only>	::= <type> <identifiers> #2000;
 
-<identifiers>	::= <id_decl> #2000 COMMA <identifiers> | <id_decl> #2000;
+<identifiers>	::= <id_decl> COMMA <identifiers> | <id_decl>;
 <id_decl>	::= ID #31 | ID #31 SB_OPEN INT_LIT #50 SB_CLOSE;
 
-<assignment>	::= <id> ASSIGN #11 <exp> #4 | <unary_assign> #11;
+<assignment>	::= <id> ASSIGN <exp> #4 | <unary_assign> ;
 <unary_assign>	::= <id> INCREMENT#12 | <id> DECREMENT#13;
 
-<return>		::= RETURN#20 | RETURN <exp>#21;
+<return>	::= RETURN#20 | RETURN <exp>#21;
 
 <id>		::= ID #30 | ID #30 <vector>;
 
 <func_call>	::= ID#2100 RB_OPEN <args>#2101 RB_CLOSE#2102;
-<args>		::= <args_rec> | î;
+<args>		::= <args_rec> | �;
 <args_rec>	::= <exp> COMMA <args_rec> | <exp>;
 
 <input>		::= READ <id>;
-<output>		::= WRITE <exp>;
+<output>	::= WRITE <exp>;
 
 <exp> 		::= <exp> OR <exp1> #401| <exp1>;
 <exp1>		::= <exp1> AND <exp2> #402| <exp2>;
@@ -209,14 +209,14 @@ ID : {ID}
 <exp4>		::= <exp4> BIT_AND <exp5> #405 | <exp5>;
 <exp5>		::= <exp5> <relational> <exp6> #406 | <exp6>;
 <exp6>		::= <exp6> <bitwise> <exp7> #407 | <exp7>;	
-<exp7>		::= <exp7> <arith_low> #777 <exp8> #408 | <exp8>;
+<exp7>		::= <exp7> <arith_low> <exp8> #408 | <exp8>;
 <exp8>		::= <exp8> <arith_high> <exp9> #409 | <exp9> ;
 <exp9> 		::= <negation> <exp10> #410| <exp10>;
-<exp10>		::= <id> #610 | RB_OPEN <exp> RB_CLOSE | <literal>#666 | <func_call> #2103;
+<exp10>		::= <id> #610 | RB_OPEN <exp> RB_CLOSE | <literal> | <func_call> #2103;
 
 <vector> 	::= SB_OPEN <exp>#25 SB_CLOSE;
 
-<literal>		::= INT_LIT #601 | FLOAT_LIT #602 | BIN_LIT #603 | HEX_LIT #604 | STRING_LIT #605 | TRUE #606 | FALSE #607;
+<literal>	::= INT_LIT #601 | FLOAT_LIT #602 | BIN_LIT #603 | HEX_LIT #604 | STRING_LIT #605 | TRUE #606 | FALSE #607;
 <relational>	::= GT #301 | LT#301| GTE#301 | LTE#301 | EQ#301 | NEQ#301; 
 <negation>	::= MINUS#302 | BIT_NOT#302 | NOT#302;
 <bitwise>	::= SHIFT_LEFT #303 | SHIFT_RIGHT#303;
