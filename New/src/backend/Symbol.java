@@ -1,8 +1,7 @@
 package backend;
 
-public class Symbol {
+public class Symbol extends LanguageData {
 	private String identifier;
-	private Type type;
 	private boolean function;
 	private boolean initialized;
 	private boolean parameter;
@@ -26,15 +25,18 @@ public class Symbol {
 	}
 
 	public Symbol() {
+		super(DataVariant.SYMBOL);
+		
 		this.size = 1;
 		this.function = false;
 		this.initialized = false;
 		this.used = false;
 		this.parameter = false;
-		this.used = false;
 	}
 
 	public Symbol(String identifier, Type type, boolean function, boolean initialized, boolean used, boolean parameter, int size, int scope, int depth, int parameterPosition) {
+		this();
+		
 		this.identifier = identifier;
 		this.type = type;
 		this.function = function;
@@ -45,10 +47,6 @@ public class Symbol {
 		this.scope = scope;
 		this.depth = depth;
 		this.parameterPosition = parameterPosition;
-	}
-
-	public Type getType() {
-		return type;
 	}
 
 	public String getIdentifier() {
@@ -113,6 +111,9 @@ public class Symbol {
 
 	public void setUsed(boolean used) {
 		this.used = used;
+		System.out.println("This one is now used \\/");
+		System.out.println(this.toString());
+		
 	}
 
 	public int getDepth() {

@@ -1,5 +1,6 @@
 package backend.operators;
 
+import backend.LanguageData;
 import backend.Type;
 
 public class UnaryOperator extends Operator {
@@ -9,8 +10,8 @@ public class UnaryOperator extends Operator {
 
 	@Override
 	public Type verify() {
-		Type type = operands.get(0);
+		LanguageData data = operands.get(0);
 		
-		return table.get(0, type.ordinal());
+		return table.get(0, data.getType().ordinal());
 	}
 }

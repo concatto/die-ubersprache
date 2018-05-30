@@ -4,12 +4,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import backend.LanguageData;
 import backend.Type;
 import backend.TypeTable;
 
 public abstract class Operator {
 	protected TypeTable table;
-	protected List<Type> operands;
+	protected List<LanguageData> operands;
 	private static HashMap<String, Operator> operators = new HashMap<>();
 	
 	static {
@@ -24,15 +25,15 @@ public abstract class Operator {
 		table = new TypeTable(tableConfiguration);
 	}
 	
-	public void setOperands(Type... operands) {
+	public void setOperands(LanguageData... operands) {
 		this.operands = Arrays.asList(operands);
 	}
 	
-	public void setOperands(List<Type> operands) {
+	public void setOperands(List<LanguageData> operands) {
 		this.operands = operands;
 	}
 	
-	public List<Type> getOperands() {
+	public List<LanguageData> getOperands() {
 		return operands;
 	}
 	

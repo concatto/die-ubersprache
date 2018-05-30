@@ -6,13 +6,14 @@ import application.Logger;
 import backend.Symbol;
 import backend.SymbolTable;
 import backend.Type;
+import backend.generator.AssemblyProgram;
 import grammar.SemanticError;
 
 public class Accessor extends AbstractAction {
 	private Stack<String> identifiers = new Stack<>();
 	
-	public Accessor(SymbolTable table) {
-		super(table);
+	public Accessor(SymbolTable table, AssemblyProgram program) {
+		super(table, program);
 	}
 	
 	public void pushIdentifier(String identifier) {
@@ -32,8 +33,10 @@ public class Accessor extends AbstractAction {
 	public Symbol access() throws SemanticError {
 		Symbol s = table.getSymbol(getCurrentIdentifier());
 		
+		System.out.println("here!");
+		
 		if (!s.isInitialized() && !s.isParameter()) {
-			System.out.println("here!");
+			//System.out.println("here!");
 			Logger.warn(String.format("Symbol %s was used without being initialized.", s.getIdentifier()));
 		}
 		

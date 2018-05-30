@@ -3,7 +3,9 @@ package grammar.actions;
 import application.Logger;
 import backend.Symbol;
 import backend.SymbolTable;
+import backend.Temporary;
 import backend.Type;
+import backend.generator.AssemblyProgram;
 import backend.operators.BinaryOperator;
 import grammar.SemanticError;
 
@@ -18,8 +20,8 @@ public class Assigner extends AbstractAction {
 			{0, 0, 0, 0, 0, 0}
 	});
 
-	public Assigner(SymbolTable table) {
-		super(table);
+	public Assigner(SymbolTable table, AssemblyProgram program) {
+		super(table, program);
 	}
 	
 	public void setIdentifier(String identifier) throws SemanticError {
@@ -40,7 +42,7 @@ public class Assigner extends AbstractAction {
 			Logger.warn(String.format("Precision loss when assigning to symbol %s.", symbol.getIdentifier()));
 		}
 		
-		assignmentOperator.setOperands(symbol.getType(), resultingType);
+		assignmentOperator.setOperands(symbol, new Temporary(resultingType));
 		Type result = assignmentOperator.verify();
 		
 		if (result != symbol.getType()) {
@@ -50,5 +52,7 @@ public class Assigner extends AbstractAction {
 		}
 		
 		symbol.setInitialized(true);
+		
+		program.store(symbol);
 	}
 }

@@ -14,6 +14,7 @@ import org.fxmisc.richtext.LineNumberFactory;
 import backend.Symbol;
 import backend.SymbolTable;
 import backend.Type;
+import backend.generator.AssemblyProgram;
 import grammar.Lexico;
 import grammar.Semantico;
 import grammar.Sintatico;
@@ -136,9 +137,18 @@ public class Controller {
 			   "",
 			   "  falls (1) {",
 			   "    ganze b;",
+			   "    a erhält 5;",
 			   "  }",
-			   "  b erhält 5;",
-			   "}"
+			   "  //should fail",
+			   "  //b erhält 5;",
+			   "  ganze b erhält 2 + a;",
+			   "}",
+			   "",
+			   "funktion test(ganze a, ganze b) liefert leer zurück {",
+			   "  ganze c erhält 2 + a;",
+			   "  //should fail",
+			   "  //ganze a;",
+			   "}",
 	   };
       
 	   codeArea.replaceText(0, 0, String.join("\n", lines));
@@ -265,24 +275,28 @@ public class Controller {
 			stage.show();
 		
 			SymbolTable table = new SymbolTable();
+			AssemblyProgram program = new AssemblyProgram();
 			
 			Lexico lex = new Lexico();
 			Sintatico sintatico = new Sintatico();
-			Semantico sem = new Semantico(table);
+			Semantico sem = new Semantico(table, program);
 			
 			lex.setInput(codeArea.getText());
 			
 			try {
 				sintatico.parse(lex, sem);
+				program.parseSymbolTable(table);
+				
+				System.out.println(program.generateProgram());
 				
 				// If it's not a function and it's not being used, warn the user
-				table.getTable().stream().filter(s -> !s.isUsed() && !s.isFunction()).forEach(s -> {
+				table.getSymbols().stream().filter(s -> !s.isUsed() && !s.isFunction()).forEach(s -> {
 					Logger.warn(String.format("Symbol %s %s is not being used.", s.getType(), s.getIdentifier()));
 				});
 				
 				table.print();
 				
-				  final ObservableList<Symbol> data = FXCollections.observableArrayList(table.getTable());
+				  final ObservableList<Symbol> data = FXCollections.observableArrayList(table.getSymbols());
 				  tabela.setItems(data);
 				//table.print();
 				edit_console.setText("done.");

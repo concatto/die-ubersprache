@@ -3,34 +3,32 @@ package grammar.actions;
 import backend.Symbol;
 import backend.SymbolTable;
 import backend.Type;
+import backend.generator.AssemblyProgram;
 import grammar.SemanticError;
 
-public class Declarer {
+public class Declarer extends AbstractAction {
 	private Symbol functionSymbol = new Symbol();
 	private Symbol currentSymbol;
 	private int parameterPosition = -1;
-	private SymbolTable table;
-	private int depth = 0;
 
-	public Declarer(SymbolTable table) {
-		this.table = table;
+	public Declarer(SymbolTable table, AssemblyProgram program) {
+		super(table, program);
 		reset();
 	}
 
 	public void setFunctionIdentifier(String identifier) {
 		functionSymbol.setIdentifier(identifier);
 		functionSymbol.setFunction(true);
-		
 	}
 	
 	public boolean isFunction() {
 		return currentSymbol.isFunction();
 	}
 
-	public void commitFunction(int depth) throws SemanticError {
+	public void commitFunction() throws SemanticError {
 		// The type is always stored in the general symbol
 		functionSymbol.setType(currentSymbol.getType());
-		commitSymbol(functionSymbol, depth);
+		commitSymbol(functionSymbol);
 
 		// Reset the symbol
 		functionSymbol = new Symbol();
@@ -58,18 +56,22 @@ public class Declarer {
 
 	public void setScope(int scope) {
 		currentSymbol.setScope(scope);
-	}	
+	}
+	
+	public void setDepth(int depth) {
+		currentSymbol.setDepth(depth);
+	}
 	
 	public void setParameter(boolean parameter) {
 		currentSymbol.setParameter(parameter);
 	}
 
-	public void commit(int depth) throws SemanticError {
-		commitSymbol(currentSymbol, depth);
+	public void commit() throws SemanticError {
+		commitSymbol(currentSymbol);
 	}
 
-	private void commitSymbol(Symbol symbol, int depth) throws SemanticError {
-		if (table.exists(symbol, depth)) {
+	private void commitSymbol(Symbol symbol) throws SemanticError {
+		if (table.exists(symbol.getIdentifier())) {
 			throw new SemanticError(String.format("Symbol %s already exists.", symbol.getIdentifier()));
 		}
 
@@ -80,20 +82,16 @@ public class Declarer {
 		}
 
 		Symbol toBeAdded = new Symbol(
-				symbol.getIdentifier(), symbol.getType(),
-				symbol.isFunction(), false, symbol.isParameter(), false, symbol.getSize(),
-				symbol.getScope(), 0, parameterPosition
+				symbol.getIdentifier(), symbol.getType(), symbol.isFunction(),
+				symbol.isInitialized(), symbol.isUsed(), symbol.isParameter(), symbol.getSize(),
+				symbol.getScope(), symbol.getDepth(), parameterPosition
 		);
-		toBeAdded.setCount(symbol.getCount());
+		
 		table.addSymbol(toBeAdded);
 		System.out.printf("Symbol added: %s %s %s\n", symbol.getType(), symbol.getIdentifier(), symbol.getScope());
 	}
 
 	public void reset() {
 		currentSymbol = new Symbol();
-	}
-
-	public void setCount(int count) {
-		currentSymbol.setCount(count);
 	}
 }

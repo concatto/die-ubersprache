@@ -1,10 +1,6 @@
 package grammar;
 
-import java.net.Socket;
-import java.util.Stack;
-
 import backend.Evaluator;
-import backend.Symbol;
 import backend.SymbolTable;
 import backend.Type;
 import backend.operators.Operator;
@@ -12,7 +8,7 @@ import grammar.actions.Accessor;
 import grammar.actions.Action;
 import grammar.actions.Assigner;
 import grammar.actions.Declarer;
-import javafx.util.Pair;
+
 
 public class Semantico implements Constants
 {
@@ -20,17 +16,11 @@ public class Semantico implements Constants
 	private Assigner assigner;
 	private Accessor accessor;
 	private Evaluator evaluator = new Evaluator();
-	private Stack scopes = new Stack<>();
-	private int level = 0;
-	private int count = 0;
-	private SymbolTable table;
 
 	public Semantico(SymbolTable table) {
-		this.table = table;
 		this.declarer = new Declarer(table);
 		this.assigner = new Assigner(table);
 		this.accessor = new Accessor(table);
-
 	}
 
     public void executeAction(int code, Token token) throws SemanticError {
@@ -44,7 +34,11 @@ public class Semantico implements Constants
         }
 
         System.out.println(action);
-        
+
+        //Variaveis responsáveis para geração do código assembly
+        boolean flagexp = true;
+        String oper = null;
+        String nome_id_atrib = ''s;
 
         switch (action) {
         case DECLARE_TYPE:
@@ -53,18 +47,16 @@ public class Semantico implements Constants
 
         case STORE_ID_FUNCTION:
         	declarer.setFunctionIdentifier(lexeme);
-        	scopes.push(level);
-        	count++;
-        	level++;
         	break;
 
         case STORE_ID_DECLARATION:
         	declarer.setCurrentIdentifier(lexeme);
-        	declarer.setCount(count);
+
         	break;
 
         case STORE_ID_GENERAL:
         	accessor.pushIdentifier(lexeme);
+        	nome_id_atrib = token.getLexeme();
         	break;
 
         case ASSIGNMENT_FROM_DECLARATION:
@@ -72,25 +64,20 @@ public class Semantico implements Constants
         	break;
 
         case ASSIGNMENT_FROM_ACCESS:
-        	Symbol s = table.search(accessor.getCurrentIdentifier(), scopes.size());
-        	
-        	if(s == null) {
-        		throw new SemanticError("A variavel "+accessor.getCurrentIdentifier()+" não foi declarada nesse escopo!");
-        	}
         	assigner.setIdentifier(accessor.getCurrentIdentifier());
         	break;
 
         case COMPLETE_DECLARATION:
-        	declarer.setScope(level);
-        	declarer.commit(scopes.size());
+        	declarer.commit();
         	break;
 
         case COMPLETE_FUNCTION_DECLARATION:
-        	declarer.commitFunction(scopes.size());
+        	declarer.commitFunction();
         	break;
 
         case COMPLETE_ASSIGNMENT:
         	assigner.commit(evaluator.pop());
+        	gera_cod("STO", nome_id_atrib);
         	break;
 
         case RESET_DECLARER:
@@ -98,6 +85,9 @@ public class Semantico implements Constants
 
         case PUSH_OPERATOR:
         	evaluator.pushOperator(Operator.fromLexeme(lexeme));
+        	flagexp = true;
+        	oper = token.getLexeme();
+
         	break;
 
         case PUSH_LITERAL:
@@ -106,14 +96,59 @@ public class Semantico implements Constants
 
         case PUSH_SYMBOL:
         	evaluator.pushType(accessor.access().getType());
-        	break;
+        	if(!flagexp) {
+        		gera_cod("LD", token.getLexeme());
+        	} else {
+        		if(oper == "+")
+        			gera_cod("ADD", token.getLexeme());
+        		if(oper == "-")
+        			gera_cod("SUB", token.getLexeme());
+        		flagexp = false;
+        	}
 
+        	break;
+        case LITERAL_VALUE:
+        	if(!flagexp) {
+        		gera_cod("LDI", token.getLexeme());
+        	} else {
+        		if(oper == "+")
+        			gera_cod("ADDI", token.getLexeme());
+        		if(oper == "-")
+        			gera_cod("SUBI", token.getLexeme());
+        		flagexp = false;
+        	}
+
+        	break;
         case SET_ARRAY_SIZE:
         	declarer.setArray(Integer.parseInt(lexeme));
         	break;
-
         case ACCESS_POSITION:
         	accessor.testArrayAccess(evaluator.pop());
+        	int position = token.getLexeme();
+	        if(!flagexp) {
+        		if(position == 0) {
+	        		gera_cod("LDI", position);
+	        		gera_cod("STO", "$indr");
+	        		gera_cod("LDV", "vet");
+	        	} else {
+	        		gera_cod("STO", "temp1");
+	        		gera_cod("LD", position);
+	        		gera_cod("STO", "$indr");
+	        		gera_cod("LDV", "vet");
+	        		gera_cod("STO", "temp2");
+	        		gera_cod("LD", "temp1");
+	        		//ADD OU SUB em temp2
+	        	}
+	        } else {
+	        	gera_cod("LDI", position);
+	        	gera_cod("STO", "temp1");
+	        	gera_cod("LD", nome_id_atrib);
+	        	gera_cod("STO", temp2);
+	        	gera_cod("LD", "temp1");
+	        	gera_cod("STO", "$indr");
+	        	gera_cod("LD", "temp2");
+	        	gera_cod("STOV", "vet");
+	        }
         	break;
 
         case EVALUATE_BINARY:
@@ -127,18 +162,23 @@ public class Semantico implements Constants
         case BEGIN_PARAMETERS:
         	declarer.setParameter(true);
         	break;
-        	
-        case CLOSE_SCOPE:
-        	scopes.pop();
-        	break;
         case OPEN_SCOPE:
-        	level++;
-        	count++;
-        	scopes.push(level);
+
+        	break;
+        case CLOSE_SCOPE:
+
+        	break;
+        case OPEN_SCOPE_FUNCTION:
+
         	break;
         }
     }
 
-////////////////////////CORRETO!
+	private void gera_cod(String string, String lexeme) {
+		// TODO Auto-generated method stub
+
+	}
+
+
 
 }

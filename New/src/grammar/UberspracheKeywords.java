@@ -12,14 +12,14 @@ public class UberspracheKeywords
 {
 
     public static final String[] KEYWORDS = new String[]{"ganze", "reelle", "zeichenkette",
-			"boolesche", "zeichen", "leer", "funktion", "zurückliefern", "liefert", "zurück",
-			"falls", "sonst", "falsch", "wahr", "während", "für", "tun", "lesen", "schreiben",
+			"boolesche", "zeichen", "leer", "funktion", "zurÃ¼ckliefern", "liefert", "zurÃ¼ck",
+			"falls", "sonst", "falsch", "wahr", "wÃ¤hrend", "fÃ¼r", "tun", "lesen", "schreiben",
 			"jede", "von"
 	};
 
-	public static final String[] OPERATORS = new String[] {"grösser als", "kleiner als",
-			"grösser oder gleich als", "kleiner oder gleich als", "gleich", "ungleich",
-			"erhält", "und", "oder", "nicht"
+	public static final String[] OPERATORS = new String[] {"grÃ¶sser als", "kleiner als",
+			"grÃ¶sser oder gleich als", "kleiner oder gleich als", "gleich", "ungleich",
+			"erhÃ¤lt", "und", "oder", "nicht"
 	};
 			
     public static final String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) +
