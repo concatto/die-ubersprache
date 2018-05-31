@@ -53,12 +53,11 @@ public class Semantico implements Constants
 
         case STORE_ID_DECLARATION:
         	declarer.setCurrentIdentifier(lexeme);
-
+					name_id_atrib = token.getLexeme();
         	break;
 
         case STORE_ID_GENERAL:
         	accessor.pushIdentifier(lexeme);
-        	name_id_atrib = token.getLexeme();
         	break;
 
         case ASSIGNMENT_FROM_DECLARATION:
@@ -115,7 +114,7 @@ public class Semantico implements Constants
         		if(oper == "+")
 							instructionSection.add(token.getLexeme()); //ADD
         		if(oper == "-")
-								InstructionSection.subtract(token.getLexeme()); //SUB
+							InstructionSection.subtract(token.getLexeme()); //SUB
         		flagexp = false;
         	}
 
@@ -125,30 +124,36 @@ public class Semantico implements Constants
         	break;
         case ACCESS_POSITION:
         	accessor.testArrayAccess(evaluator.pop());
-        	int position = token.getLexeme();
-	        if(!flagexp) {
-        		if(position == 0) {
-	        		instructionSection.loadImmediate(position); //gera_cod("LDI", position);
-	        		instructionSection.storeIndex(); //gera_cod("STO", "$indr");
-	        		instructionSection.loadVector("vet"); //gera_cod("LDV", "vet");
+        	String position = token.getLexeme();
+	        if(flagexp) { //FLAG PARA SABER SE O VETOR TA DO LADO ESQUERDO OU DIREITO (ATRIBUINDO OU SENDO ATRIBUIDO)
+        		if(position == '0') {
+	        		instructionSection.loadImmediate(position);
+	        		instructionSection.storeIndex();
+	        		instructionSection.loadVector("vet");
+							instructionSection.store(name_id_atrib);
 	        	} else {
-	        		instructionSection.store("temp1"); //gera_cod("STO", "temp1");
-	        		instructionSection.load(position); //gera_cod("LD", position);
-	        		instructionSection.storeIndex(); //gera_cod("STO", "$indr");
-	        		instructionSection.loadVector("vet"); //gera_cod("LDV", "vet");
-	        		instructionSection.store("temp2"); //gera_cod("STO", "temp2");
-	        		instructionSection.load("temp1"); //gera_cod("LD", "temp1");
+							instructionSection.loadImmediate(position);
+							instructionSection.storeIndex();
+							instructionSection.loadVector("vet");
+							instructionSection.store(name_id_atrib);
+							//não sei se a parte de cima deve estar dentro desse ELSE
+	        		instructionSection.store("temp1");
+	        		instructionSection.load(position);
+	        		instructionSection.storeIndex();
+	        		instructionSection.loadVector("vet");
+	        		instructionSection.store("temp2");
+	        		instructionSection.load("temp1");
 	        		//ADD OU SUB em temp2 (NÃO SEI O QUE FAZER AQUI E NEM SE É DE FATO AQUI QUE EU TRATO ISSO TUDO)
 	        	}
 	        } else {
-	        	instructionSection.loadImmediate(position); //gera_cod("LDI", position);
-	        	instruction.store("temp1"); //gera_cod("STO", "temp1");
-	        	instructionSection.load(name_id_atrib); //gera_cod("LD", name_id_atrib);
-	        	instructionSection.store("temp2"); //gera_cod("STO", temp2);
-	        	instructionSection.load("temp1"); //gera_cod("LD", "temp1");
-	        	instructionSection.storeIndex(); //gera_cod("STO", "$indr");
-	        	instructionSection.load("temp2"); //gera_cod("LD", "temp2");
-	        	instructionSection.storeVector("vet") //gera_cod("STOV", "vet");
+	        	instructionSection.loadImmediate(position);
+	        	instruction.store("temp1");
+	        	instructionSection.load(name_id_atrib);
+	        	instructionSection.store("temp2");
+	        	instructionSection.load("temp1");
+	        	instructionSection.storeIndex();
+	        	instructionSection.load("temp2");
+	        	instructionSection.storeVector("vet");
 	        }
         	break;
 
