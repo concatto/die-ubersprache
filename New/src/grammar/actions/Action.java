@@ -25,8 +25,7 @@ public enum Action {
 	CLOSE_SCOPE_FUNCTION,
 	OPEN_SCOPE_FOR,
 	CLOSE_SCOPE_FOR,
-	ARITHMETICS,
-	LITERAL_VALUE;
+	ARITHMETICS;
 
 	public static Action parse(int code) {
 		switch (code) {
@@ -58,8 +57,6 @@ public enum Action {
 			return PUSH_LITERAL;
 		case 610:
 			return PUSH_SYMBOL;
-		case 666:
-			return LITERAL_VALUE;
 		case 401:
 		case 402:
 		case 403:
