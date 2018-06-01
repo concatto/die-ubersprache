@@ -10,7 +10,7 @@ public class InstructionSection {
 		addInstruction("ADD", value);
 	}
 
-	public void addImediate(int value) {
+	public void addImmediate(int value) {
 		addInstruction("ADDI", Integer.toString(value));
 	}
 

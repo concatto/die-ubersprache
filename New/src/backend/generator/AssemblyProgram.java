@@ -10,6 +10,9 @@ import backend.LanguageData;
 import backend.Literal;
 import backend.Symbol;
 import backend.SymbolTable;
+import backend.Temporary;
+import backend.Type;
+import backend.operators.BinaryOperator;
 
 public class AssemblyProgram {
 	private List<DataItem> dataSection = new ArrayList<>();
@@ -23,6 +26,11 @@ public class AssemblyProgram {
 		return String.format("%s_d%d__%d", symbol.getIdentifier(), symbol.getDepth(), symbol.getScope());
 	}
 	
+	private static String generateName(Temporary temporary) {
+		return "temp" + temporary.getIndex();
+	}
+	
+	// Transforms a Symbol instance into a data item with the symbol's properties.
 	private static DataItem parseSymbol(Symbol symbol) {
 		String value = Stream.generate(() -> "0")
 			.limit(symbol.getSize())
@@ -38,6 +46,7 @@ public class AssemblyProgram {
 			.collect(Collectors.toList());
 	}
 	
+	// Generates the data section of the assembly program.
 	public String generateData() {
 		StringBuilder builder = new StringBuilder(".data\n");
 		for (DataItem item : dataSection) {
@@ -46,13 +55,17 @@ public class AssemblyProgram {
 		
 		return builder.toString();
 	}
-	
+
+	// Generates the text section of the assembly program.
 	public String generateText() {
 		List<Instruction> instructions = text.getInstructions();
-		Instruction last = instructions.get(instructions.size() - 1);
 		
-		if (!last.getOperation().equals("HLT")) {
-			text.halt();
+		if (instructions.size() > 0) {
+			Instruction last = instructions.get(instructions.size() - 1);
+			
+			if (!last.getOperation().equals("HLT")) {
+				text.halt();
+			}
 		}
 		
 		StringBuilder builder = new StringBuilder(".text\n");
@@ -66,21 +79,64 @@ public class AssemblyProgram {
 	public String generateProgram() {
 		return generateData() + generateText();
 	}
-
-	public void add(LanguageData a, LanguageData b) {
-		// TODO make this better. What about temporaries?
-		if (a.getVariant() == DataVariant.SYMBOL) {
-			text.add(generateName((Symbol) a));
-		} else if (a.getVariant() == DataVariant.LITERAL) {
-			Literal<Integer> l = (Literal<Integer>) a;
-			text.addImediate(l.getValue());
+	
+	@SuppressWarnings("unchecked")
+	public Temporary evaluateBinary(LanguageData lhs, LanguageData rhs, BinaryOperator op, Type resultType) {
+		// We're missing arrays. TODO		
+		// First, retrieve the left hand side.
+		switch (lhs.getVariant()) {
+		case LITERAL:
+			// If it's a literal, just load it.
+			int value = ((Literal<Integer>) lhs).getValue();
+			text.loadImmediate(String.valueOf(value));
+			
+			break;
+		case SYMBOL:
+			// If it's a variable, we need its assembly name.
+			Symbol symbol = (Symbol) lhs;
+			text.load(generateName(symbol));
+			
+			break;
+		case TEMPORARY:
+			// If it's a temporary, first we must retrieve it by name then release the index it holds.
+			Temporary temp = (Temporary) lhs;
+			text.load(generateName(temp));
+			
+			Temporary.release(temp);
+			
+			break;
 		}
 		
-		if (b.getVariant() == DataVariant.SYMBOL) {
-			text.add(generateName((Symbol) b));
-		} else if (b.getVariant() == DataVariant.LITERAL) {
-			Literal<Integer> l = (Literal<Integer>) b;
-			text.addImediate(l.getValue());
+		// Then, execute the operation with the right hand side.
+		// We'll assume it's an addition for now.
+		// It's really similar to the left hand side section, the only thing that is different
+		// is the function called on the InstructionSection object
+		switch (rhs.getVariant()) {
+		case LITERAL:
+			// If it's a literal, simply invoke an immediate instruction
+			int value = ((Literal<Integer>) rhs).getValue();
+			text.addImmediate(value);
+			
+			break;
+		case SYMBOL:
+			// If it's a variable, we need its assembly name.
+			Symbol symbol = (Symbol) rhs;
+			text.add(generateName(symbol));
+			
+			break;
+		case TEMPORARY:
+			// If it's a temporary, first we must retrieve it by name then release the index it holds.
+			Temporary temp = (Temporary) rhs;
+			text.add(generateName(temp));
+			
+			Temporary.release(temp);
+			
+			break;
 		}
+		
+		// When everything is said and done, store the resultant temporary.
+		Temporary result = Temporary.reserve(resultType);
+		text.store(generateName(result));
+		return result;
 	}
 }

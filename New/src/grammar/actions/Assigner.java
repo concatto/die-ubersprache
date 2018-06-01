@@ -42,6 +42,7 @@ public class Assigner extends AbstractAction {
 			Logger.warn(String.format("Precision loss when assigning to symbol %s.", symbol.getIdentifier()));
 		}
 		
+		// TODO Will have to be fixed.
 		assignmentOperator.setOperands(symbol, new Temporary(resultingType));
 		Type result = assignmentOperator.verify();
 		

@@ -1,8 +1,10 @@
 package grammar;
 
 import backend.Evaluator;
+import backend.ScopeManager;
 import backend.SymbolTable;
 import backend.Type;
+import backend.generator.AssemblyProgram;
 import backend.generator.InstructionSection;
 import backend.operators.Operator;
 import grammar.actions.Accessor;
@@ -10,20 +12,28 @@ import grammar.actions.Action;
 import grammar.actions.Assigner;
 import grammar.actions.Declarer;
 
-
-public class Semantico implements Constants
-{
+public class Semantico implements Constants {
 	private Declarer declarer;
 	private Assigner assigner;
 	private Accessor accessor;
 	private Evaluator evaluator = new Evaluator();
 	private InstructionSection instructionSection = new InstructionSection();
+	private SymbolTable table;
+	private ScopeManager scopeManager;
+	private AssemblyProgram program;
 
-	public Semantico(SymbolTable table) {
-		this.declarer = new Declarer(table);
-		this.assigner = new Assigner(table);
-		this.accessor = new Accessor(table);
+	public Semantico(SymbolTable table, AssemblyProgram program) {
+		this.table = table;
+		this.program = program;
+		this.declarer = new Declarer(table, program);
+		this.assigner = new Assigner(table, program);
+		this.accessor = new Accessor(table, program);
+
+		evaluator.setProgram(program);
+		scopeManager = new ScopeManager();
+		this.table.setScopeManager(scopeManager);
 	}
+	
     public void executeAction(int code, Token token) throws SemanticError {
         System.out.println("Ação #"+code+", Token: "+token);
 
@@ -38,9 +48,9 @@ public class Semantico implements Constants
 
         //Variaveis responsáveis para geração do código assembly
         boolean flagexp = false;
-        String oper = '';
-        String name_id_atrib = '';
-				String value = '0';
+        String oper = "";
+        String name_id_atrib = "";
+		String value = "0";
 
         switch (action) {
         case DECLARE_TYPE:
@@ -49,6 +59,7 @@ public class Semantico implements Constants
 
         case STORE_ID_FUNCTION:
         	declarer.setFunctionIdentifier(lexeme);
+        	scopeManager.push();
         	break;
 
         case STORE_ID_DECLARATION:
@@ -65,22 +76,28 @@ public class Semantico implements Constants
         	break;
 
         case ASSIGNMENT_FROM_ACCESS:
+        	// Checks if the symbol exists
+        	table.getSymbol(accessor.getCurrentIdentifier());
+        	
         	assigner.setIdentifier(accessor.getCurrentIdentifier());
         	break;
 
         case COMPLETE_DECLARATION:
+        	declarer.setScope(scopeManager.getTotalScopes());
+        	declarer.setDepth(scopeManager.getDepth());
         	declarer.commit();
         	break;
 
         case COMPLETE_FUNCTION_DECLARATION:
+        	declarer.setScope(scopeManager.getTotalScopes());
         	declarer.commitFunction();
         	break;
 
         case COMPLETE_ASSIGNMENT:
-        	assigner.commit(evaluator.pop());
-					value = token.getLexeme();
-					instructionSection.addInstruction(name_id_atrib, value); //const = 1 ou qualquerOutroNome = QualquerValor
-					value = '0';
+        	assigner.commit(evaluator.pop().getType());
+			value = token.getLexeme();
+			//instructionSection.addInstruction(name_id_atrib, value); //const = 1 ou qualquerOutroNome = QualquerValor
+			value = "0";
         	break;
 
         case RESET_DECLARER:
@@ -94,12 +111,12 @@ public class Semantico implements Constants
         	break;
 
         case PUSH_LITERAL:
-        	evaluator.pushType(Type.deduceLiteral(code));
+        	evaluator.pushLiteral(code, lexeme);
 					if(!flagexp) {
 						instructionSection.loadImmediate(token.getLexeme()); //LDI
 					} else {
 						if(oper == "+")
-							instructionSection.addImediate(token.getLexeme()); //ADDI
+							instructionSection.addImmediate(Integer.parseInt(token.getLexeme())); //ADDI
 						if(oper == "-")
 							instructionSection.subtractImediate(token.getLexeme()); //SUBI
 						flagexp = false;
@@ -107,14 +124,14 @@ public class Semantico implements Constants
         	break;
 
         case PUSH_SYMBOL:
-        	evaluator.pushType(accessor.access().getType());
+        	evaluator.pushSymbol(accessor.access());
         	if(!flagexp) {
 						instructionSection.load(token.getLexeme()); //LD
         	} else {
         		if(oper == "+")
 							instructionSection.add(token.getLexeme()); //ADD
         		if(oper == "-")
-							InstructionSection.subtract(token.getLexeme()); //SUB
+							instructionSection.subtract(token.getLexeme()); //SUB
         		flagexp = false;
         	}
 
@@ -123,10 +140,10 @@ public class Semantico implements Constants
         	declarer.setArray(Integer.parseInt(lexeme));
         	break;
         case ACCESS_POSITION:
-        	accessor.testArrayAccess(evaluator.pop());
+        	accessor.testArrayAccess(evaluator.pop().getType());
         	String position = token.getLexeme();
 	        if(flagexp) { //FLAG PARA SABER SE O VETOR TA DO LADO ESQUERDO OU DIREITO (ATRIBUINDO OU SENDO ATRIBUIDO)
-        		if(position == '0') {
+        		if(position == "0") {
 	        		instructionSection.loadImmediate(position);
 	        		instructionSection.storeIndex();
 	        		instructionSection.loadVector("vet");
@@ -147,7 +164,7 @@ public class Semantico implements Constants
 	        	}
 	        } else {
 	        	instructionSection.loadImmediate(position);
-	        	instruction.store("temp1");
+	        	instructionSection.store("temp1");
 	        	instructionSection.load(name_id_atrib);
 	        	instructionSection.store("temp2");
 	        	instructionSection.load("temp1");
@@ -169,10 +186,10 @@ public class Semantico implements Constants
         	declarer.setParameter(true);
         	break;
         case OPEN_SCOPE:
-
+        	scopeManager.push();
         	break;
         case CLOSE_SCOPE:
-
+        	scopeManager.pop();
         	break;
         case OPEN_SCOPE_FUNCTION:
 

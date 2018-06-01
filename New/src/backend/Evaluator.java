@@ -5,12 +5,14 @@ import java.util.List;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
+import backend.generator.AssemblyProgram;
 import backend.operators.Operator;
 import grammar.SemanticError;
 
 public class Evaluator {
 	private Stack<LanguageData> dataStack = new Stack<>();
 	private Stack<Operator> operatorStack = new Stack<>();
+	private AssemblyProgram program;
 	
 	public Evaluator() {
 		
@@ -33,15 +35,24 @@ public class Evaluator {
 		Operator op = operatorStack.pop();
 		op.setOperands(operands);
 		
-		String phrase = operands.stream().map(v -> v.getType().toString()).collect(Collectors.joining(", ", "[", "]"));
+		String phrase = operands.stream()
+				.map(v -> String.format("%s - %s", v.getType(), v.getVariant()))
+				.collect(Collectors.joining(", ", "[", "]"));
 		System.out.printf("Evaluating %s with operand(s) %s\n", op, phrase);
 		
 		Type result = op.verify();
 		System.out.println("Result: " + result);
+		
 		if (result == null) {
 			throw new SemanticError(String.format("Operand(s) %s incompatible for operation %s.", phrase, op));
-		} else {
-			push(new Temporary(result));
+		} else {			
+			// This is testing territory!
+			if (nOperands == 2) {
+				Temporary temp = program.evaluateBinary(operands.get(0), operands.get(1), null, result);
+				push(temp);
+			} else {
+				throw new UnsupportedOperationException("NYI");
+			}
 		}
 	}
 	
@@ -58,5 +69,9 @@ public class Evaluator {
 
 	public void pushSymbol(Symbol symbol) {
 		push(symbol);		
+	}
+
+	public void setProgram(AssemblyProgram program) {
+		this.program = program;
 	}
 }
