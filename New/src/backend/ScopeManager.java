@@ -32,6 +32,7 @@ public class ScopeManager {
 	}
 	
 	public Optional<Integer> find(String identifier) {
+		System.out.println("Searching for " + identifier);
 		int i = 0;
 		for (Map<String, Integer> identifiers : scopes) {
 			System.out.println("At " + (i++));

@@ -25,7 +25,9 @@ public enum Action {
 	CLOSE_SCOPE_FUNCTION,
 	OPEN_SCOPE_FOR,
 	CLOSE_SCOPE_FOR,
-	ARITHMETICS;
+	ARITHMETICS,
+	READ,
+	WRITE;
 
 	public static Action parse(int code) {
 		switch (code) {
@@ -49,6 +51,10 @@ public enum Action {
 			return BEGIN_PARAMETERS;
 		case 50:
 			return SET_ARRAY_SIZE;
+		case 60:
+			return READ;
+		case 61:
+			return WRITE;
 		case 601:
 		case 602:
 		case 605:

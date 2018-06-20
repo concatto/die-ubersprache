@@ -12,7 +12,9 @@ import backend.Symbol;
 import backend.SymbolTable;
 import backend.Temporary;
 import backend.Type;
+import backend.operators.Add;
 import backend.operators.BinaryOperator;
+import backend.operators.Subtract;
 
 public class AssemblyProgram {
 	private List<DataItem> dataSection = new ArrayList<>();
@@ -27,7 +29,7 @@ public class AssemblyProgram {
 	}
 	
 	private static String generateName(Temporary temporary) {
-		return "temp" + temporary.getIndex();
+		return "100" + temporary.getIndex();
 	}
 	
 	// Transforms a Symbol instance into a data item with the symbol's properties.
@@ -56,6 +58,7 @@ public class AssemblyProgram {
 		return builder.toString();
 	}
 
+	
 	// Generates the text section of the assembly program.
 	public String generateText() {
 		List<Instruction> instructions = text.getInstructions();
@@ -81,31 +84,58 @@ public class AssemblyProgram {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Temporary evaluateBinary(LanguageData lhs, LanguageData rhs, BinaryOperator op, Type resultType) {
-		// We're missing arrays. TODO		
-		// First, retrieve the left hand side.
-		switch (lhs.getVariant()) {
+	public void load(LanguageData ld) {
+		switch (ld.getVariant()) {
 		case LITERAL:
-			// If it's a literal, just load it.
-			int value = ((Literal<Integer>) lhs).getValue();
+			int value = ((Literal<Integer>) ld).getValue();
 			text.loadImmediate(String.valueOf(value));
 			
 			break;
 		case SYMBOL:
-			// If it's a variable, we need its assembly name.
-			Symbol symbol = (Symbol) lhs;
+			Symbol symbol = (Symbol) ld;
 			text.load(generateName(symbol));
 			
 			break;
 		case TEMPORARY:
-			// If it's a temporary, first we must retrieve it by name then release the index it holds.
-			Temporary temp = (Temporary) lhs;
+			Temporary temp = (Temporary) ld;
 			text.load(generateName(temp));
-			
 			Temporary.release(temp);
 			
 			break;
 		}
+	}
+	
+	public Temporary evaluateVector(LanguageData index, Symbol symbol) {
+		load(index);
+		text.storeIndex();
+		text.loadVector(generateName(symbol));
+		Temporary temp = Temporary.reserve(symbol.getType());
+		text.store(generateName(temp));
+		
+		return temp;
+	}
+	
+	private void generateImmediateOperation(int value, BinaryOperator op) {
+		if (op instanceof Add) {
+			text.addImmediate(value);
+		} else if (op instanceof Subtract) {
+			text.subtractImmediate(value);
+		}
+	}
+	
+	private void generateOperation(String name, BinaryOperator op) {
+		if (op instanceof Add) {
+			text.add(name);
+		} else if (op instanceof Subtract) {
+			text.subtract(name);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Temporary evaluateBinary(LanguageData lhs, LanguageData rhs, BinaryOperator op, Type resultType) {
+		// We're missing arrays. TODO
+		// First, retrieve the left hand side.
+		load(lhs);
 		
 		// Then, execute the operation with the right hand side.
 		// We'll assume it's an addition for now.
@@ -115,21 +145,20 @@ public class AssemblyProgram {
 		case LITERAL:
 			// If it's a literal, simply invoke an immediate instruction
 			int value = ((Literal<Integer>) rhs).getValue();
-			text.addImmediate(value);
+			generateImmediateOperation(value, op);
 			
 			break;
 		case SYMBOL:
 			// If it's a variable, we need its assembly name.
 			Symbol symbol = (Symbol) rhs;
-			text.add(generateName(symbol));
+			generateOperation(generateName(symbol), op);
 			
 			break;
 		case TEMPORARY:
 			// If it's a temporary, first we must retrieve it by name then release the index it holds.
 			Temporary temp = (Temporary) rhs;
-			text.add(generateName(temp));
-			
 			Temporary.release(temp);
+			generateOperation(generateName(temp), op);
 			
 			break;
 		}
@@ -138,5 +167,15 @@ public class AssemblyProgram {
 		Temporary result = Temporary.reserve(resultType);
 		text.store(generateName(result));
 		return result;
+	}
+	
+	public void read(Symbol symbol) {
+		text.read();
+		text.store(generateName(symbol));
+	}
+	
+	public void write(LanguageData data) {
+		load(data);
+		text.write();
 	}
 }

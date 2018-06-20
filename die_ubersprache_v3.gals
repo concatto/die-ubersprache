@@ -8,7 +8,7 @@ SemanticName = Semantico
 Package = grammar
 ScannerCaseSensitive = true
 ScannerTable = Compact
-Input = String
+Input = Stream
 Parser = SLR
 #RegularDefinitions
 NUM: [0-9]
@@ -43,13 +43,13 @@ COMMA : ","
 MOD: "%" 
 COLON : ":"
 END : ";"
-GT : "grÃ¶sser als"
+GT : "grösser als"
 LT : "kleiner als"
-GTE : "grÃ¶sser oder gleich"
+GTE : "grösser oder gleich"
 LTE : "kleiner oder gleich"
 EQ : "gleich"
 NEQ : "ungleich"
-ASSIGN : "erhÃ¤lt"
+ASSIGN : "erhält"
 M_COMMENT : {M_COMMENT}
 COMMENT : {COMMENT}
 SHIFT_RIGHT: ">>"
@@ -68,15 +68,15 @@ STRING : "zeichenkette" //string
 BOOL : "boolesche" //boolean
 CHAR: "zeichen" //char
 FUNC : "funktion" //function
-RETURN : "zurÃ¼ckliefern" //return
+RETURN : "zurückliefern" //return
 GIVES : "liefert" //gives
-BACK : "zurÃ¼ck" //back, as in: gives int back; liefert ganze zurÃ¼ck
+BACK : "zurück" //back, as in: gives int back; liefert ganze zurück
 IF : "falls" //if
 ELSE : "sonst" //else
 FALSE : "falsch" //false
 TRUE: "wahr" //true
-WHILE : "wÃ¼hrend" //while
-FOR : "fÃ¼r" //for
+WHILE : "während" //while
+FOR : "für" //for
 EACH : "jede"
 OF : "von"
 DO : "tun" //do
@@ -158,14 +158,14 @@ ID : {ID}
 #Grammar
 <program>	::= <program> <function> | <function>;
 
-<body>		::= CB_OPEN <statements> CB_CLOSE #3001;
+<body>		::= CB_OPEN <statements> CB_CLOSE #1300;
 <function>	::= FUNC ID #32 RB_OPEN #555 #39 <parameters> #2001 RB_CLOSE GIVES #15 <type> #1999 #2001 #16 BACK <body> #556;
 
-<parameters>	::= <parameter_rec> | Ã®;
+<parameters>	::= <parameter_rec> | î;
 <parameter_rec> 	::= <parameter>#40 COMMA <parameter_rec> | <parameter>#40;
-<parameter>	::= <type> <id_decl> #2000;
+<parameter>	::= <type> <id>;
 
-<statements>	::= <statement_rec> | Ã®;
+<statements>	::= <statement_rec> | î;
 <statement_rec>	::= <statement> <statement_rec> | <statement>;
 <statement>	::= <block> | <comment> | <instruction> END;
 
@@ -179,7 +179,7 @@ ID : {ID}
 <while>		::= WHILE RB_OPEN <exp>#60 RB_CLOSE#900 <body>;
 <do_while>	::= DO#1100 <body> WHILE RB_OPEN <exp>#60 RB_CLOSE END;
 
-<instruction>	::= <assignment> | <declaration> #2001 | <input>#14 | <output>#15 | <return> | <exp>;
+<instruction>	::= <assignment> | <declaration> | <input>#14 | <output>#15 | <return> | <exp>;
 
 <declaration>	::= <decl_assign> | <decl_only>;
 <decl_assign>	::= <type> <id_decl> ASSIGN <exp> #2000 #4;
@@ -188,7 +188,7 @@ ID : {ID}
 <identifiers>	::= <id_decl> COMMA <identifiers> | <id_decl>;
 <id_decl>	::= ID #31 | ID #31 SB_OPEN INT_LIT #50 SB_CLOSE;
 
-<assignment>	::= <id> ASSIGN #11 <exp> #4 | <unary_assign> ;
+<assignment>	::= <id> ASSIGN <exp> #4 | <unary_assign> ;
 <unary_assign>	::= <id> INCREMENT#12 | <id> DECREMENT#13;
 
 <return>	::= RETURN#20 | RETURN <exp>#21;
@@ -197,7 +197,7 @@ ID : {ID}
 
 <func_call>	::= ID#2100 RB_OPEN <args>#2101 RB_CLOSE#2102;
 
-<args>		::= <args_rec> | Ã®;
+<args>		::= <args_rec> | î;
 <args_rec>	::= <exp> COMMA <args_rec> | <exp>;
 
 <input>		::= READ <id>;

@@ -6,6 +6,7 @@ import java.util.Stack;
 import java.util.stream.Collectors;
 
 import backend.generator.AssemblyProgram;
+import backend.operators.BinaryOperator;
 import backend.operators.Operator;
 import grammar.SemanticError;
 
@@ -48,7 +49,7 @@ public class Evaluator {
 		} else {			
 			// This is testing territory!
 			if (nOperands == 2) {
-				Temporary temp = program.evaluateBinary(operands.get(0), operands.get(1), null, result);
+				Temporary temp = program.evaluateBinary(operands.get(0), operands.get(1), (BinaryOperator) op, result);
 				push(temp);
 			} else {
 				throw new UnsupportedOperationException("NYI");

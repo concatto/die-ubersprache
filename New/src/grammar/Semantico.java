@@ -1,8 +1,11 @@
 package grammar;
 
 import backend.Evaluator;
+import backend.LanguageData;
 import backend.ScopeManager;
+import backend.Symbol;
 import backend.SymbolTable;
+import backend.Temporary;
 import backend.Type;
 import backend.generator.AssemblyProgram;
 import backend.generator.InstructionSection;
@@ -46,13 +49,7 @@ public class Semantico implements Constants {
 
         System.out.println(action);
 
-        //Variaveis responsáveis para geração do código assembly
-        boolean flagexp = false;
-        String oper = "";
-        String name_id_atrib = "";
-		String value = "0";
-
-        switch (action) {
+		switch (action) {
         case DECLARE_TYPE:
         	declarer.setCurrentType(Type.fromLexeme(lexeme));
         	break;
@@ -64,7 +61,7 @@ public class Semantico implements Constants {
 
         case STORE_ID_DECLARATION:
         	declarer.setCurrentIdentifier(lexeme);
-					name_id_atrib = token.getLexeme();
+
         	break;
 
         case STORE_ID_GENERAL:
@@ -95,9 +92,7 @@ public class Semantico implements Constants {
 
         case COMPLETE_ASSIGNMENT:
         	assigner.commit(evaluator.pop().getType());
-			value = token.getLexeme();
-			//instructionSection.addInstruction(name_id_atrib, value); //const = 1 ou qualquerOutroNome = QualquerValor
-			value = "0";
+        	
         	break;
 
         case RESET_DECLARER:
@@ -105,73 +100,26 @@ public class Semantico implements Constants {
 
         case PUSH_OPERATOR:
         	evaluator.pushOperator(Operator.fromLexeme(lexeme));
-        	flagexp = true; //flag de <exp>
-        	oper = token.getLexeme(); //oper = +,-,*,%,/
-
         	break;
 
         case PUSH_LITERAL:
         	evaluator.pushLiteral(code, lexeme);
-					if(!flagexp) {
-						instructionSection.loadImmediate(token.getLexeme()); //LDI
-					} else {
-						if(oper == "+")
-							instructionSection.addImmediate(Integer.parseInt(token.getLexeme())); //ADDI
-						if(oper == "-")
-							instructionSection.subtractImediate(token.getLexeme()); //SUBI
-						flagexp = false;
-					}
         	break;
 
         case PUSH_SYMBOL:
         	evaluator.pushSymbol(accessor.access());
-        	if(!flagexp) {
-						instructionSection.load(token.getLexeme()); //LD
-        	} else {
-        		if(oper == "+")
-							instructionSection.add(token.getLexeme()); //ADD
-        		if(oper == "-")
-							instructionSection.subtract(token.getLexeme()); //SUB
-        		flagexp = false;
-        	}
-
         	break;
+        	
         case SET_ARRAY_SIZE:
         	declarer.setArray(Integer.parseInt(lexeme));
         	break;
+        	
         case ACCESS_POSITION:
-        	accessor.testArrayAccess(evaluator.pop().getType());
-        	String position = token.getLexeme();
-	        if(flagexp) { //FLAG PARA SABER SE O VETOR TA DO LADO ESQUERDO OU DIREITO (ATRIBUINDO OU SENDO ATRIBUIDO)
-        		if(position == "0") {
-	        		instructionSection.loadImmediate(position);
-	        		instructionSection.storeIndex();
-	        		instructionSection.loadVector("vet");
-							instructionSection.store(name_id_atrib);
-	        	} else {
-							instructionSection.loadImmediate(position);
-							instructionSection.storeIndex();
-							instructionSection.loadVector("vet");
-							instructionSection.store(name_id_atrib);
-							//não sei se a parte de cima deve estar dentro desse ELSE
-	        		instructionSection.store("temp1");
-	        		instructionSection.load(position);
-	        		instructionSection.storeIndex();
-	        		instructionSection.loadVector("vet");
-	        		instructionSection.store("temp2");
-	        		instructionSection.load("temp1");
-	        		//ADD OU SUB em temp2 (NÃO SEI O QUE FAZER AQUI E NEM SE É DE FATO AQUI QUE EU TRATO ISSO TUDO)
-	        	}
-	        } else {
-	        	instructionSection.loadImmediate(position);
-	        	instructionSection.store("temp1");
-	        	instructionSection.load(name_id_atrib);
-	        	instructionSection.store("temp2");
-	        	instructionSection.load("temp1");
-	        	instructionSection.storeIndex();
-	        	instructionSection.load("temp2");
-	        	instructionSection.storeVector("vet");
-	        }
+        	LanguageData index = evaluator.pop();
+        	Symbol nameVector =  table.getSymbol(accessor.getCurrentIdentifier());
+        	accessor.testArrayAccess(index.getType());
+        	Temporary temp = program.evaluateVector(index, nameVector);
+        	evaluator.push(temp);
         	break;
 
         case EVALUATE_BINARY:
@@ -192,16 +140,21 @@ public class Semantico implements Constants {
         	scopeManager.pop();
         	break;
         case OPEN_SCOPE_FUNCTION:
-
+        	break;
+        	
+        case READ:
+        	Symbol s = table.getSymbol(accessor.getCurrentIdentifier());
+        	program.read(s);
+        	
+        	break;
+        
+        case WRITE:
+        	LanguageData data = evaluator.pop();
+        	program.write(data);
+        	
         	break;
         }
     }
-
-	private void gera_cod(String string, String lexeme) {
-		// TODO Auto-generated method stub
-
-	}
-
 
 
 }

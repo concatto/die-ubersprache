@@ -18,8 +18,8 @@ public class InstructionSection {
 		addInstruction("SUB", value);
 	}
 
-	public void subtractImediate(String value) {
-		addInstruction("SUBI", value);
+	public void subtractImmediate(int value) {
+		addInstruction("SUBI", Integer.toString(value));
 	}
 
 	public void load(String value) {
