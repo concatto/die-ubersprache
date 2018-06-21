@@ -43,13 +43,13 @@ COMMA : ","
 MOD: "%" 
 COLON : ":"
 END : ";"
-GT : "grÃ¶sser als"
+GT : "grösser als"
 LT : "kleiner als"
-GTE : "grÃ¶sser oder gleich"
+GTE : "grösser oder gleich"
 LTE : "kleiner oder gleich"
 EQ : "gleich"
 NEQ : "ungleich"
-ASSIGN : "erhÃ¤lt"
+ASSIGN : "erhält"
 M_COMMENT : {M_COMMENT}
 COMMENT : {COMMENT}
 SHIFT_RIGHT: ">>"
@@ -68,15 +68,15 @@ STRING : "zeichenkette" //string
 BOOL : "boolesche" //boolean
 CHAR: "zeichen" //char
 FUNC : "funktion" //function
-RETURN : "zurÃ¼ckliefern" //return
+RETURN : "zurückliefern" //return
 GIVES : "liefert" //gives
-BACK : "zurÃ¼ck" //back, as in: gives int back; liefert ganze zurÃ¼ck
+BACK : "zurück" //back, as in: gives int back; liefert ganze zurÃ¼ck
 IF : "falls" //if
 ELSE : "sonst" //else
 FALSE : "falsch" //false
 TRUE: "wahr" //true
-WHILE : "wÃ¤hrend" //while
-FOR : "fÃ¼r" //for
+WHILE : "während" //while
+FOR : "für" //for
 EACH : "jede"
 OF : "von"
 DO : "tun" //do
@@ -125,6 +125,7 @@ ID : {ID}
 <return>
 
 <id>
+<id_vector>
 
 <func_call>
 <args>
@@ -161,11 +162,11 @@ ID : {ID}
 <body>		::= CB_OPEN <statements> CB_CLOSE #3001;
 <function>	::= FUNC ID #32 RB_OPEN #555 #39 <parameters> #2001 RB_CLOSE GIVES #15 <type> #1999 #2001 #16 BACK <body> #556;
 
-<parameters>	::= <parameter_rec> | Ã®;
+<parameters>	::= <parameter_rec> | î;
 <parameter_rec> 	::= <parameter>#40 COMMA <parameter_rec> | <parameter>#40;
-<parameter>	::= <type> <id>;
+<parameter>	::= <type> <id> | <type> <id_vector>;
 
-<statements>	::= <statement_rec> | Ã®;
+<statements>	::= <statement_rec> | î;
 <statement_rec>	::= <statement> <statement_rec> | <statement>;
 <statement>	::= <block> | <comment> | <instruction> END;
 
@@ -173,9 +174,9 @@ ID : {ID}
 
 <block>		::= <if> | <if_else> | <while> | <for> | <for_each> | <do_while>;
 <if>		::= IF RB_OPEN <exp>#60 RB_CLOSE#1200 <body>;
-<if_else>		::= <if> ELSE#1300 <body>;
+<if_else>	::= <if> ELSE#1300 <body>;
 <for>		::= FOR RB_OPEN <declaration>#701 END <exp>#702 END <assignment>#703 RB_CLOSE #700 <body>;
-<for_each>	::= FOR EACH RB_OPEN <type>#801 <id>#802 OF <exp>#803 RB_CLOSE#800 <body>;
+<for_each>	::= FOR EACH RB_OPEN <type>#801 <id>#802 OF <exp>#803 RB_CLOSE#800 <body> | FOR EACH RB_OPEN <type>#801 <id_vector>#802 OF <exp>#803 RB_CLOSE#800 <body>;
 <while>		::= WHILE RB_OPEN <exp>#60 RB_CLOSE#900 <body>;
 <do_while>	::= DO#1100 <body> WHILE RB_OPEN <exp>#60 RB_CLOSE END;
 
@@ -188,20 +189,20 @@ ID : {ID}
 <identifiers>	::= <id_decl> #2000 COMMA <identifiers> | <id_decl> #2000;
 <id_decl>	::= ID #31 | ID #31 SB_OPEN INT_LIT #50 SB_CLOSE;
 
-<assignment>	::= <id> ASSIGN #11 <exp> #4 | <unary_assign> ;
-<unary_assign>	::= <id> INCREMENT#12 | <id> DECREMENT#13;
+<assignment>	::= <id> ASSIGN #11 <exp> #4 | <id_vector> ASSIGN #11 <exp> #4  | <unary_assign>;
+<unary_assign>	::= <id> INCREMENT#12 | <id> DECREMENT#13 | <id_vector> INCREMENT#12 | <id_vector> DECREMENT#13;
 
-<return>		::= RETURN#20 | RETURN <exp>#21;
+<return>	::= RETURN#20 | RETURN <exp>#21;
 
-<id>		::= ID #30 | ID #30 <vector>;
-
+<id>		::= ID #30;
+<id_vector> 	::= ID #30 <vector>;
 <func_call>	::= ID#2100 RB_OPEN <args>#2101 RB_CLOSE#2102;
 
-<args>		::= <args_rec> | Ã®;
+<args>		::= <args_rec> | î;
 <args_rec>	::= <exp> COMMA <args_rec> | <exp>;
 
-<input>		::= READ <id> #60;
-<output>		::= WRITE <exp> #61;
+<input>		::= READ <id> #60 | READ <id_vector> #60;
+<output>	::= WRITE <exp> #61;
 
 <exp> 		::= <exp> OR <exp1> #401| <exp1>;
 <exp1>		::= <exp1> AND <exp2> #402| <exp2>;
@@ -213,14 +214,14 @@ ID : {ID}
 <exp7>		::= <exp7> <arith_low> <exp8> #408 | <exp8>;
 <exp8>		::= <exp8> <arith_high> <exp9> #409 | <exp9> ;
 <exp9> 		::= <negation> <exp10> #410| <exp10>;
-<exp10>		::= <id> #610 | RB_OPEN <exp> RB_CLOSE | <literal> | <func_call> #2103;
+<exp10>		::= <id> #610 | <id_vector> | RB_OPEN <exp> RB_CLOSE | <literal> | <func_call> #2103;
 
 <vector> 	::= SB_OPEN <exp>#25 SB_CLOSE;
 
-<literal>		::= INT_LIT #601 | FLOAT_LIT #602 | BIN_LIT #603 | HEX_LIT #604 | STRING_LIT #605 | TRUE #606 | FALSE #607;
+<literal>	::= INT_LIT #601 | FLOAT_LIT #602 | BIN_LIT #603 | HEX_LIT #604 | STRING_LIT #605 | TRUE #606 | FALSE #607;
 <relational>	::= GT #301 | LT#301| GTE#301 | LTE#301 | EQ#301 | NEQ#301; 
 <negation>	::= MINUS#302 | BIT_NOT#302 | NOT#302;
 <bitwise>	::= SHIFT_LEFT #303 | SHIFT_RIGHT#303;
 <arith_low> 	::= PLUS #300 | MINUS #300;
-<arith_high>	::= MULT #300 | DIV #300 | MOD #300 ;
+<arith_high>	::= MULT #300 | DIV #300 | MOD #300;
 <type>		::= INT #1 | FLOAT #1 | STRING #1 | BOOL #1 | VOID #1 | CHAR #1;
