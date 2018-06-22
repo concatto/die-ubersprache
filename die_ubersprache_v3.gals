@@ -8,7 +8,7 @@ SemanticName = Semantico
 Package = grammar
 ScannerCaseSensitive = true
 ScannerTable = Compact
-Input = String
+Input = Stream
 Parser = SLR
 #RegularDefinitions
 NUM: [0-9]
@@ -174,7 +174,7 @@ ID : {ID}
 
 <block>		::= <if> | <if_else> | <while> | <for> | <for_each> | <do_while>;
 <if>		::= IF RB_OPEN <exp>#60 RB_CLOSE#1200 <body>;
-<if_else>		::= <if> ELSE#1300 <body>;
+<if_else>	::= <if> ELSE#1300 <body>;
 <for>		::= FOR RB_OPEN <declaration>#701 END <exp>#702 END <assignment>#703 RB_CLOSE #700 <body>;
 <for_each>	::= FOR EACH RB_OPEN <type>#801 <id>#802 OF <exp>#803 RB_CLOSE#800 <body> | FOR EACH RB_OPEN <type>#801 <id_vector>#802 OF <exp>#803 RB_CLOSE#800 <body>;
 <while>		::= WHILE RB_OPEN <exp>#60 RB_CLOSE#900 <body>;
@@ -218,7 +218,7 @@ ID : {ID}
 
 <vector> 	::= SB_OPEN <exp>#25 SB_CLOSE;
 
-<literal>		::= INT_LIT #601 | FLOAT_LIT #602 | BIN_LIT #603 | HEX_LIT #604 | STRING_LIT #605 | TRUE #606 | FALSE #607;
+<literal>	::= INT_LIT #601 | FLOAT_LIT #602 | BIN_LIT #603 | HEX_LIT #604 | STRING_LIT #605 | TRUE #606 | FALSE #607;
 <relational>	::= GT #301 | LT#301| GTE#301 | LTE#301 | EQ#301 | NEQ#301; 
 <negation>	::= MINUS#302 | BIT_NOT#302 | NOT#302;
 <bitwise>	::= SHIFT_LEFT #303 | SHIFT_RIGHT#303;
