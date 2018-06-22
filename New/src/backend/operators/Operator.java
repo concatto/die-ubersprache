@@ -19,6 +19,8 @@ public abstract class Operator {
 		operators.put("*", new Multiply());
 		operators.put("/", new Divide());
 		operators.put("nicht", new Negate());
+		operators.put("&", new BitwiseAnd());
+		operators.put("|", new BitwiseOr());
 	}
 	
 	public Operator(int[][] tableConfiguration) {

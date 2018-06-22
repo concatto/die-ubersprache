@@ -2,6 +2,7 @@ package grammar;
 
 import backend.Evaluator;
 import backend.LanguageData;
+import backend.Literal;
 import backend.ScopeManager;
 import backend.Symbol;
 import backend.SymbolTable;
@@ -37,6 +38,8 @@ public class Semantico implements Constants {
 		this.table.setScopeManager(scopeManager);
 	}
 	
+	boolean firstLDI = true;
+	boolean afterErhalt = false; 
     public void executeAction(int code, Token token) throws SemanticError {
         System.out.println("Ação #"+code+", Token: "+token);
 
@@ -74,8 +77,8 @@ public class Semantico implements Constants {
 
         case ASSIGNMENT_FROM_ACCESS:
         	// Checks if the symbol exists
-        	table.getSymbol(accessor.getCurrentIdentifier());
-        	
+        	table.getSymbol(accessor.getCurrentIdentifier()); 
+        	afterErhalt = true;
         	assigner.setIdentifier(accessor.getCurrentIdentifier());
         	break;
 
@@ -91,12 +94,14 @@ public class Semantico implements Constants {
         	break;
 
         case COMPLETE_ASSIGNMENT:
-        	assigner.commit(evaluator.pop().getType());
-        	
+        	assigner.commit(evaluator.dataStack.peek());
+        	afterErhalt = false;
+        	//System.out.println("TESTE: "+((Literal<Integer>) evaluator.pop()).getValue());
         	break;
 
         case RESET_DECLARER:
         	declarer.reset();
+        	break;
 
         case PUSH_OPERATOR:
         	evaluator.pushOperator(Operator.fromLexeme(lexeme));
@@ -104,10 +109,18 @@ public class Semantico implements Constants {
 
         case PUSH_LITERAL:
         	evaluator.pushLiteral(code, lexeme);
+        	//if(firstLDI) {
+        		//program.load(evaluator.dataStack.peek());
+        		//firstLDI = false;
+        	//}
+        	program.load(evaluator.dataStack.peek());
+        	
         	break;
+
 
         case PUSH_SYMBOL:
         	evaluator.pushSymbol(accessor.access());
+        	
         	break;
         	
         case SET_ARRAY_SIZE:
@@ -115,10 +128,12 @@ public class Semantico implements Constants {
         	break;
         	
         case ACCESS_POSITION:
-        	LanguageData index = evaluator.pop();
+        	LanguageData index = evaluator.dataStack.peek();
+        	System.out.println("Pilha Data"+evaluator.dataStack.peek().getVariant());
         	Symbol nameVector =  table.getSymbol(accessor.getCurrentIdentifier());
         	accessor.testArrayAccess(index.getType());
-        	Temporary temp = program.evaluateVector(index, nameVector);
+        	Temporary temp = program.evaluateVector(index, nameVector, afterErhalt, evaluator.dataStack.peek());
+
         	evaluator.push(temp);
         	break;
 

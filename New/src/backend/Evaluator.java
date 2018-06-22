@@ -11,7 +11,7 @@ import backend.operators.Operator;
 import grammar.SemanticError;
 
 public class Evaluator {
-	private Stack<LanguageData> dataStack = new Stack<>();
+	public Stack<LanguageData> dataStack = new Stack<>();
 	private Stack<Operator> operatorStack = new Stack<>();
 	private AssemblyProgram program;
 	

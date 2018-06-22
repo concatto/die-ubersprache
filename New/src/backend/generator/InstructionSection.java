@@ -21,6 +21,22 @@ public class InstructionSection {
 	public void subtractImmediate(int value) {
 		addInstruction("SUBI", Integer.toString(value));
 	}
+	
+	public void and(String value) {
+		addInstruction("AND", value);
+	}
+	
+	public void andImmediate(int value) {
+		addInstruction("ANDI", Integer.toString(value));
+	}
+	
+	public void or(String value) {
+		addInstruction("OR", value);
+	}
+	
+	public void orImmediate(int value) {
+		addInstruction("ORI", Integer.toString(value));
+	}
 
 	public void load(String value) {
 		addInstruction("LD", value);

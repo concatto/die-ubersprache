@@ -27,7 +27,8 @@ public enum Action {
 	CLOSE_SCOPE_FOR,
 	ARITHMETICS,
 	READ,
-	WRITE;
+	WRITE,
+	TEST_CONDITION;
 
 	public static Action parse(int code) {
 		switch (code) {
@@ -52,8 +53,10 @@ public enum Action {
 		case 50:
 			return SET_ARRAY_SIZE;
 		case 60:
+			return TEST_CONDITION;
+		case 70:
 			return READ;
-		case 61:
+		case 71:
 			return WRITE;
 		case 601:
 		case 602:
@@ -77,6 +80,8 @@ public enum Action {
 			return EVALUATE_UNARY;
 		case 300:
 		case 302:
+		case 304:
+		case 305:
 			return PUSH_OPERATOR;
 		case 1999:
 			return COMPLETE_FUNCTION_DECLARATION;

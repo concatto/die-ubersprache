@@ -14,6 +14,8 @@ import backend.Temporary;
 import backend.Type;
 import backend.operators.Add;
 import backend.operators.BinaryOperator;
+import backend.operators.BitwiseAnd;
+import backend.operators.BitwiseOr;
 import backend.operators.Subtract;
 
 public class AssemblyProgram {
@@ -104,14 +106,19 @@ public class AssemblyProgram {
 			break;
 		}
 	}
-	
-	public Temporary evaluateVector(LanguageData index, Symbol symbol) {
-		load(index);
+	public Temporary evaluateVector(LanguageData index, Symbol symbol, boolean afterErhalt, LanguageData literal) {
+		//load(index);
 		text.storeIndex();
-		text.loadVector(generateName(symbol));
-		Temporary temp = Temporary.reserve(symbol.getType());
-		text.store(generateName(temp));
+		if(afterErhalt) {
+			text.loadVector(generateName(symbol));
+		}else {
+			//int value = ((Literal<Integer>) literal).getValue();
+			//text.add(String.valueOf(value));
+			//text.storeVector(generateName(symbol));
+		}
 		
+		Temporary temp = Temporary.reserve(symbol.getType());
+		//text.store(generateName(temp));
 		return temp;
 	}
 	
@@ -120,6 +127,10 @@ public class AssemblyProgram {
 			text.addImmediate(value);
 		} else if (op instanceof Subtract) {
 			text.subtractImmediate(value);
+		} else if (op instanceof BitwiseAnd) {
+			text.andImmediate(value);
+		} else if (op instanceof BitwiseOr) {
+			text.orImmediate(value);
 		}
 	}
 	
@@ -128,6 +139,10 @@ public class AssemblyProgram {
 			text.add(name);
 		} else if (op instanceof Subtract) {
 			text.subtract(name);
+		} else if (op instanceof BitwiseAnd) {
+			text.and(name);
+		} else if (op instanceof BitwiseOr) {
+			text.or(name);
 		}
 	}
 	

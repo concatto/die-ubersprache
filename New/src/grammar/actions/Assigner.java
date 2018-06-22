@@ -1,6 +1,8 @@
 package grammar.actions;
 
 import application.Logger;
+import backend.DataVariant;
+import backend.LanguageData;
 import backend.Symbol;
 import backend.SymbolTable;
 import backend.Temporary;
@@ -33,27 +35,32 @@ public class Assigner extends AbstractAction {
 		return table.getSymbol(identifier);
 	}
 	
-	public void commit(Type resultingType) throws SemanticError {
+	public void commit(LanguageData rhs) throws SemanticError {
 		Symbol symbol = table.getSymbol(identifier);
 		
-		System.out.printf("The resulting type for %s %s is %s\n", symbol.getType(), symbol.getIdentifier(), resultingType);
+		System.out.printf("The resulting type for %s %s is %s\n", symbol.getType(), symbol.getIdentifier(), rhs.getType());
 		
-		if (resultingType == Type.REAL && symbol.getType() == Type.INTEGER) {
+		if (rhs.getType() == Type.REAL && symbol.getType() == Type.INTEGER) {
 			Logger.warn(String.format("Precision loss when assigning to symbol %s.", symbol.getIdentifier()));
 		}
 		
 		// TODO Will have to be fixed.
-		assignmentOperator.setOperands(symbol, new Temporary(resultingType));
+		assignmentOperator.setOperands(symbol, rhs);
 		Type result = assignmentOperator.verify();
 		
 		if (result != symbol.getType()) {
 			String message = "Type %s cannot be assigned to a symbol of type %s.";
 			
-			throw new SemanticError(String.format(message, resultingType, symbol.getType()));
+			throw new SemanticError(String.format(message, rhs.getType(), symbol.getType()));
 		}
 		
 		symbol.setInitialized(true);
-		
+		program.load(rhs);
 		program.store(symbol);
+		
+		
+		if (rhs.getVariant() == DataVariant.TEMPORARY) {
+			Temporary.release((Temporary) rhs);
+		}
 	}
 }
