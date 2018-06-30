@@ -28,7 +28,8 @@ public enum Action {
 	ARITHMETICS,
 	READ,
 	WRITE,
-	TEST_CONDITION;
+	TEST_CONDITION,
+	INSERT_LABEL;
 
 	public static Action parse(int code) {
 		switch (code) {
@@ -79,6 +80,7 @@ public enum Action {
 		case 410:
 			return EVALUATE_UNARY;
 		case 300:
+		case 301:
 		case 302:
 		case 304:
 		case 305:
@@ -91,6 +93,7 @@ public enum Action {
 			return RESET_DECLARER;
 		case 1200://if
 		case 1300://else
+		case 1400://funcao
 		case 900://while
 		case 3000://inicio
 			return OPEN_SCOPE;
@@ -100,6 +103,8 @@ public enum Action {
 			return OPEN_SCOPE_FUNCTION;
 		case 700:
 			return OPEN_SCOPE_FOR;
+		case 3010:
+			return INSERT_LABEL;
 		}
 
 		return null;

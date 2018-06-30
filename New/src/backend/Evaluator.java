@@ -14,6 +14,7 @@ public class Evaluator {
 	public Stack<LanguageData> dataStack = new Stack<>();
 	private Stack<Operator> operatorStack = new Stack<>();
 	private AssemblyProgram program;
+	private Operator lastOperator;
 	
 	public Evaluator() {
 		
@@ -55,6 +56,12 @@ public class Evaluator {
 				throw new UnsupportedOperationException("NYI");
 			}
 		}
+		
+		lastOperator = op;
+	}
+	
+	public Operator getLastOperator() {
+		return lastOperator;
 	}
 	
 	public LanguageData pop() {

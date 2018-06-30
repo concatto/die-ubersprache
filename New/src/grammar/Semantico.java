@@ -1,6 +1,7 @@
 package grammar;
 
 import backend.Evaluator;
+import backend.FlowManager;
 import backend.LanguageData;
 import backend.Literal;
 import backend.ScopeManager;
@@ -11,6 +12,7 @@ import backend.Type;
 import backend.generator.AssemblyProgram;
 import backend.generator.InstructionSection;
 import backend.operators.Operator;
+import backend.operators.RelationalOperator;
 import grammar.actions.Accessor;
 import grammar.actions.Action;
 import grammar.actions.Assigner;
@@ -24,6 +26,7 @@ public class Semantico implements Constants {
 	private InstructionSection instructionSection = new InstructionSection();
 	private SymbolTable table;
 	private ScopeManager scopeManager;
+	private FlowManager flowManager;
 	private AssemblyProgram program;
 
 	public Semantico(SymbolTable table, AssemblyProgram program) {
@@ -35,6 +38,7 @@ public class Semantico implements Constants {
 
 		evaluator.setProgram(program);
 		scopeManager = new ScopeManager();
+		flowManager = new FlowManager(scopeManager, program);
 		this.table.setScopeManager(scopeManager);
 	}
 	
@@ -59,7 +63,6 @@ public class Semantico implements Constants {
 
         case STORE_ID_FUNCTION:
         	declarer.setFunctionIdentifier(lexeme);
-        	scopeManager.push();
         	break;
 
         case STORE_ID_DECLARATION:
@@ -150,9 +153,11 @@ public class Semantico implements Constants {
         	break;
         case OPEN_SCOPE:
         	scopeManager.push();
+        	flowManager.pushLabel(lexeme);
         	break;
         case CLOSE_SCOPE:
         	scopeManager.pop();
+        	flowManager.popLabel();
         	break;
         case OPEN_SCOPE_FUNCTION:
         	break;
@@ -167,6 +172,19 @@ public class Semantico implements Constants {
         	LanguageData data = evaluator.pop();
         	program.write(data);
         	
+        	break;
+        	
+        case TEST_CONDITION:
+        	// No need to keep the last temporary
+        	Temporary.release((Temporary) evaluator.pop());
+        	
+        	Operator op = evaluator.getLastOperator();
+        	flowManager.branch((RelationalOperator) op);
+        	
+        	break;
+        
+        case INSERT_LABEL:
+        	flowManager.insertTopLabel();
         	break;
         }
     }

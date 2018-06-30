@@ -1,7 +1,9 @@
 package backend.generator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -16,10 +18,14 @@ import backend.operators.Add;
 import backend.operators.BinaryOperator;
 import backend.operators.BitwiseAnd;
 import backend.operators.BitwiseOr;
+import backend.operators.GreaterThan;
+import backend.operators.LessThan;
+import backend.operators.RelationalOperator;
 import backend.operators.Subtract;
 
 public class AssemblyProgram {
 	private List<DataItem> dataSection = new ArrayList<>();
+	private Map<Integer, List<String>> labels = new HashMap<>(); //Might have two or more labels in sequence
 	private InstructionSection text = new InstructionSection();
 	
 	public void store(Symbol symbol) {
@@ -74,7 +80,15 @@ public class AssemblyProgram {
 		}
 		
 		StringBuilder builder = new StringBuilder(".text\n");
-		for (Instruction instruction : text.getInstructions()) {
+		for (int i = 0; i < instructions.size(); i++) {
+			if (labels.containsKey(i)) {
+				// Adds the label(s) in the current line
+				for (String label : labels.get(i)) {
+					builder.append(label + ":\n");
+				}
+			}
+			
+			Instruction instruction = instructions.get(i);
 			builder.append(String.format("  %s %s\n", instruction.getOperation(), instruction.getOperand()));
 		}
 		
@@ -131,6 +145,8 @@ public class AssemblyProgram {
 			text.andImmediate(value);
 		} else if (op instanceof BitwiseOr) {
 			text.orImmediate(value);
+		} else if (op instanceof RelationalOperator) {
+			text.subtractImmediate(value);
 		}
 	}
 	
@@ -143,6 +159,8 @@ public class AssemblyProgram {
 			text.and(name);
 		} else if (op instanceof BitwiseOr) {
 			text.or(name);
+		} else if (op instanceof RelationalOperator) {
+			text.subtract(name);
 		}
 	}
 	
@@ -153,7 +171,6 @@ public class AssemblyProgram {
 		load(lhs);
 		
 		// Then, execute the operation with the right hand side.
-		// We'll assume it's an addition for now.
 		// It's really similar to the left hand side section, the only thing that is different
 		// is the function called on the InstructionSection object
 		switch (rhs.getVariant()) {
@@ -192,5 +209,28 @@ public class AssemblyProgram {
 	public void write(LanguageData data) {
 		load(data);
 		text.write();
+	}
+	
+	public void branch(RelationalOperator op, String label) {
+		if (op instanceof GreaterThan) {
+			text.branchLessThanOrEqual(label);
+		} else if (op instanceof LessThan) {
+			text.branchGreaterThanOrEqual(label);
+		}
+	}
+
+	public void insertLabel(String label) {
+		List<String> list;
+		
+		int index = text.getInstructions().size();
+		
+		if (labels.containsKey(index)) {
+			list = labels.get(index);
+		} else {
+			list = new ArrayList<>();
+		}
+		
+		list.add(label);
+		labels.put(index, list);
 	}
 }

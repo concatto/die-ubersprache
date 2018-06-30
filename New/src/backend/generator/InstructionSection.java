@@ -38,6 +38,30 @@ public class InstructionSection {
 		addInstruction("ORI", Integer.toString(value));
 	}
 
+	public void branchGreaterThan(String label) {
+		addInstruction("BGT", label);
+	}
+	
+	public void branchLessThan(String label) {
+		addInstruction("BLT", label);
+	}
+	
+	public void branchGreaterThanOrEqual(String label) {
+		addInstruction("BGE", label);
+	}
+	
+	public void branchLessThanOrEqual(String label) {
+		addInstruction("BLE", label);
+	}
+	
+	public void branchEqual(String label) {
+		addInstruction("BEQ", label);
+	}
+	
+	public void branchNotEqual(String label) {
+		addInstruction("BNE", label);
+	}
+	
 	public void load(String value) {
 		addInstruction("LD", value);
 	}
