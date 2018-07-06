@@ -5,6 +5,8 @@ import java.util.List;
 
 public class InstructionSection {
 	private List<Instruction> instructions = new ArrayList<>();
+	private List<Instruction> recordedInstructions = new ArrayList<>();
+	private boolean recording = false;
 
 	public void add(String value) {
 		addInstruction("ADD", value);
@@ -81,6 +83,10 @@ public class InstructionSection {
 	public void storeVector(String value) {
 		addInstruction("STOV", value);
 	}
+	
+	public void jump(String label) {
+		addInstruction("JMP", label);
+	}
 
 	public void storeIndex() {
 		store("$indr");
@@ -99,10 +105,28 @@ public class InstructionSection {
 	}
 
 	private void addInstruction(String string, String value) {
-		instructions.add(new Instruction(string, value));
+		Instruction instruction = new Instruction(string, value);
+		
+		if (recording) {
+			recordedInstructions.add(instruction);
+		} else {			
+			instructions.add(instruction);
+		}
 	}
 
 	public List<Instruction> getInstructions() {
 		return instructions;
+	}
+
+	public void startRecording() {
+		recording = true;
+	}
+
+	public void endRecording() {
+		recording = false;		
+	}
+
+	public void insertRecording() {
+		instructions.addAll(recordedInstructions);
 	}
 }

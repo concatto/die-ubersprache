@@ -29,7 +29,22 @@ public enum Action {
 	READ,
 	WRITE,
 	TEST_CONDITION,
-	INSERT_LABEL;
+	INSERT_LABEL,
+	PUSH_NEW_LABEL,
+	POP_LABEL,
+	PUSH_START_LABEL,
+	INSERT_START_LABEL,
+	POP_START_LABEL,
+	PUSH_END_LABEL,
+	INSERT_END_LABEL,
+	POP_END_LABEL,
+	BRANCH_TO_START,
+	JUMP_TO_START,
+	BRANCH_TO_END,
+	JUMP_TO_END,
+	START_RECORDING,
+	END_RECORDING,
+	INSERT_RECORDING;
 
 	public static Action parse(int code) {
 		switch (code) {
@@ -105,6 +120,37 @@ public enum Action {
 			return OPEN_SCOPE_FOR;
 		case 3010:
 			return INSERT_LABEL;
+		case 3020:
+			return PUSH_NEW_LABEL;
+		case 3030:
+			return POP_LABEL;
+		case 2800:
+			return PUSH_START_LABEL;
+		case 2801:
+			return INSERT_START_LABEL;
+		case 2802:
+			return POP_START_LABEL;
+		case 2803:
+			return BRANCH_TO_START;
+		case 2804:
+			return JUMP_TO_START;
+		case 2810:
+			return PUSH_END_LABEL;
+		case 2811:
+			return INSERT_END_LABEL;
+		case 2812:
+			return POP_END_LABEL;
+		case 2813:
+			return BRANCH_TO_END;
+		case 2814:
+			return JUMP_TO_END;
+		case 2900:
+			return START_RECORDING;
+		case 2901:
+			return END_RECORDING;
+		case 2902:
+			return INSERT_RECORDING;
+		
 		}
 
 		return null;

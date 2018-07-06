@@ -233,4 +233,20 @@ public class AssemblyProgram {
 		list.add(label);
 		labels.put(index, list);
 	}
+
+	public void jump(String label) {
+		text.jump(label);
+	}
+	
+	public void startRecording() {
+		text.startRecording();
+	}
+	
+	public void endRecording() {
+		text.endRecording();
+	}
+	
+	public void insertRecording() {
+		text.insertRecording();
+	}
 }
