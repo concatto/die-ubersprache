@@ -137,7 +137,7 @@ public class Controller {
 			   "  ganze b;",
 			   "",
 			   "  für (ganze i erhält 0; i kleiner als 10; i erhält i + 1) {",
-			   "    während (b kleiner als a) {",
+			   "    falls (b kleiner als a) {",
 			   "      b erhält i;",
 			   "    }",
 			   "  }",
