@@ -33,7 +33,7 @@ public enum Action {
 
 	public static Action parse(int code) {
 		switch (code) {
-		case 1:
+		case 1:	
 			return DECLARE_TYPE;
 		case 4:
 			return COMPLETE_ASSIGNMENT;

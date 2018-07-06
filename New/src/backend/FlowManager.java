@@ -19,7 +19,6 @@ public class FlowManager {
 		program.branch(op, labelStack.peek());
 	}
 	
-	
 	public void pushLabel(String lexeme) {
 		labelStack.push(lexeme.toUpperCase() + "_" + scopeManager.getTotalScopes());
 	}

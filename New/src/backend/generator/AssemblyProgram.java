@@ -18,8 +18,12 @@ import backend.operators.Add;
 import backend.operators.BinaryOperator;
 import backend.operators.BitwiseAnd;
 import backend.operators.BitwiseOr;
+import backend.operators.DifferentThan;
+import backend.operators.EqualThan;
 import backend.operators.GreaterThan;
 import backend.operators.LessThan;
+import backend.operators.GreaterOrEqualThan;
+import backend.operators.LessOrEqualThan;
 import backend.operators.RelationalOperator;
 import backend.operators.Subtract;
 
@@ -216,7 +220,16 @@ public class AssemblyProgram {
 			text.branchLessThanOrEqual(label);
 		} else if (op instanceof LessThan) {
 			text.branchGreaterThanOrEqual(label);
+		} else if (op instanceof DifferentThan) {
+			text.branchEqual(label);
+		} else if (op instanceof EqualThan) {
+			text.branchNotEqual(label);
+		} else if (op instanceof GreaterOrEqualThan) {
+			text.branchLessThan(label);
+		} else if (op instanceof LessOrEqualThan) {
+			text.branchGreaterThan(label);
 		}
+		
 	}
 
 	public void insertLabel(String label) {
