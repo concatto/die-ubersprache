@@ -77,6 +77,10 @@ public class FlowManager {
 		program.branch(op, endStack.peek());
 	}
 	
+	public void branchDoWhile(RelationalOperator op) {
+		program.branchDoWhile(op, endStack.peek());
+	}
+	
 	public void jumpStart() {
 		program.jump(startStack.peek());
 	}
