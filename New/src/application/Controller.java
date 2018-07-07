@@ -297,7 +297,7 @@ public class Controller {
 			} catch (Exception e) {
 				e.printStackTrace();
 				edit_errors.setText(e.getMessage());
-				edit_console.setText("This code contain erros. see the errors screen");
+				edit_console.setText("This code contain errors. see the errors screen");
 			} 
 			
 	  }

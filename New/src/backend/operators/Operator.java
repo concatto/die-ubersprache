@@ -21,9 +21,9 @@ public abstract class Operator {
 		operators.put("nicht", new Negate());
 		operators.put("&", new BitwiseAnd());
 		operators.put("|", new BitwiseOr());
-		operators.put("grösser als", new GreaterThan());
+		operators.put("grÃ¶sser als", new GreaterThan());
 		operators.put("kleiner als", new LessThan());
-		operators.put("grösser oder gleich", new GreaterOrEqualThan());
+		operators.put("grÃ¶sser oder gleich", new GreaterOrEqualThan());
 		operators.put("kleiner oder gleich", new LessOrEqualThan());
 		operators.put("gleich", new EqualThan());
 		operators.put("ungleich", new DifferentThan());

@@ -246,6 +246,15 @@ public class Semantico implements Constants {
     		flowManager.pushLabel(lexeme);
     		flowManager.insertTopLabel();	
     		break;
+		
+		case TEST_CONDITION_DO_WHILE:
+			// No need to keep the last temporary
+        	Temporary.release((Temporary) evaluator.pop());
+    		flowManager.branchDoWhile((RelationalOperator) evaluator.getLastOperator());
+			
+			break;
+    		
+    	
 		}
 
     	
