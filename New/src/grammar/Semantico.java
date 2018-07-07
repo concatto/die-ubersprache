@@ -241,7 +241,15 @@ public class Semantico implements Constants {
     	case INSERT_RECORDING:
     		program.insertRecording();
     		break;
-        }
+   
+    	case OPEN_DO:
+    		flowManager.pushLabel(lexeme);
+    		flowManager.insertTopLabel();	
+    		break;
+		}
+
+    	
+		
     }
 
 

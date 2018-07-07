@@ -44,11 +44,13 @@ public enum Action {
 	JUMP_TO_END,
 	START_RECORDING,
 	END_RECORDING,
-	INSERT_RECORDING;
+	INSERT_RECORDING,
+	OPEN_DO,
+	TEST_CONDITION_DO_WHILE;
 
 	public static Action parse(int code) {
 		switch (code) {
-		case 1:
+		case 1:	
 			return DECLARE_TYPE;
 		case 4:
 			return COMPLETE_ASSIGNMENT;
@@ -150,8 +152,13 @@ public enum Action {
 			return END_RECORDING;
 		case 2902:
 			return INSERT_RECORDING;
-		
+		case 1100:
+			return OPEN_DO;
+		case 61:
+			return TEST_CONDITION_DO_WHILE;		
 		}
+		
+		
 
 		return null;
 	}
