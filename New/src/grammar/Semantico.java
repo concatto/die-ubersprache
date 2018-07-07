@@ -153,12 +153,12 @@ public class Semantico implements Constants {
         	break;
         case OPEN_SCOPE:
         	scopeManager.push();
-        	flowManager.pushLabel(lexeme);
+        	//flowManager.pushLabel(lexeme);
         	break;
         case CLOSE_SCOPE:
         	scopeManager.pop();
-        	flowManager.popLabel();
-        	break;
+        	//flowManager.popLabel();
+        	break; 
         case OPEN_SCOPE_FUNCTION:
         	break;
         	
@@ -173,20 +173,83 @@ public class Semantico implements Constants {
         	program.write(data);
         	
         	break;
-        	
-        case TEST_CONDITION:
-        	// No need to keep the last temporary
-        	Temporary.release((Temporary) evaluator.pop());
-        	
-        	Operator op = evaluator.getLastOperator();
-        	flowManager.branch((RelationalOperator) op);
-        	
-        	break;
         
         case INSERT_LABEL:
         	flowManager.insertTopLabel();
         	break;
-        }
+        	
+        case PUSH_NEW_LABEL:
+        	flowManager.pushLabel();
+        	break;
+        
+        case POP_LABEL:
+        	flowManager.popLabel();
+        	break;
+        	
+        	
+        case PUSH_START_LABEL:
+        	flowManager.pushStart();
+        	break;
+        	
+        case PUSH_END_LABEL:
+        	flowManager.pushEnd();
+        	break;
+        	
+    	case INSERT_START_LABEL:
+    		flowManager.insertStart();
+    		break;
+    		
+    	case INSERT_END_LABEL:
+    		flowManager.insertEnd();
+    		break;
+    		
+    	case POP_START_LABEL:
+    		flowManager.popStart();
+    		break;
+    		
+    	case POP_END_LABEL:
+    		flowManager.popEnd();
+    		break;
+    		
+    	case BRANCH_TO_START:
+        	// No need to keep the last temporary
+        	Temporary.release((Temporary) evaluator.pop());
+    		flowManager.branchStart((RelationalOperator) evaluator.getLastOperator());
+    		break;
+    		
+    	case JUMP_TO_START:
+    		flowManager.jumpStart();
+    		break;
+    		    		
+    	case BRANCH_TO_END:
+        	// No need to keep the last temporary
+        	Temporary.release((Temporary) evaluator.pop());
+    		flowManager.branchEnd((RelationalOperator) evaluator.getLastOperator());
+    		break;
+    		
+    	case JUMP_TO_END:
+    		flowManager.jumpEnd();
+    		break;
+    	case START_RECORDING:
+    		program.startRecording();
+    		break;
+    		
+    	case END_RECORDING:
+    		program.endRecording();
+    		break;
+    		
+    	case INSERT_RECORDING:
+    		program.insertRecording();
+    		break;
+   
+    	case OPEN_DO:
+    		flowManager.pushLabel(lexeme);
+    		flowManager.insertTopLabel();	
+    		break;
+		}
+
+    	
+		
     }
 
 

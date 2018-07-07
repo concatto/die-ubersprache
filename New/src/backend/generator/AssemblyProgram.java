@@ -231,6 +231,23 @@ public class AssemblyProgram {
 		}
 		
 	}
+	
+	public void branchDoWhile(RelationalOperator op, String label) {
+		if (op instanceof GreaterThan) {
+			text.branchGreaterThan(label);
+		} else if (op instanceof LessThan) {
+			text.branchLessThan(label);
+		} else if (op instanceof DifferentThan) {
+			text.branchNotEqual(label);
+		} else if (op instanceof EqualThan) {
+			text.branchEqual(label);
+		} else if (op instanceof GreaterOrEqualThan) {
+			text.branchGreaterThanOrEqual(label);
+		} else if (op instanceof LessOrEqualThan) {
+			text.branchLessThanOrEqual(label);
+		}
+
+	}		
 
 	public void insertLabel(String label) {
 		List<String> list;
@@ -245,5 +262,21 @@ public class AssemblyProgram {
 		
 		list.add(label);
 		labels.put(index, list);
+	}
+
+	public void jump(String label) {
+		text.jump(label);
+	}
+	
+	public void startRecording() {
+		text.startRecording();
+	}
+	
+	public void endRecording() {
+		text.endRecording();
+	}
+	
+	public void insertRecording() {
+		text.insertRecording();
 	}
 }

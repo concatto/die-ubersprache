@@ -136,8 +136,10 @@ public class Controller {
 			   "  ganze a;",
 			   "  ganze b;",
 			   "",
-			   "  falls (a kleiner als b) {",
-			   "    a erhält 5;",
+			   "  für (ganze i erhält 0; i kleiner als 10; i erhält i + 1) {",
+			   "    falls (b kleiner als a) {",
+			   "      b erhält i;",
+			   "    }",
 			   "  }",
 			   "}"
 	   };
