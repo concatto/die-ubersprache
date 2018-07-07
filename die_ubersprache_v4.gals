@@ -103,8 +103,8 @@ ID : {ID}
 <comment>
 
 <block>
-<if>
 <if_else>
+<if>
 <for>
 <for_each>
 <while>
@@ -172,9 +172,9 @@ ID : {ID}
 
 <comment>	::= COMMENT | M_COMMENT;
 
-<block>		::= <if>  #2811 #2812 | <if_else>  #2811 #2812 | <while> | <for> | <for_each> | <do_while>;
-<if>		::= IF #1200 #2800 #2810 RB_OPEN <exp> #2803 RB_CLOSE <body> #2814 #3001;
-<if_else>	::= <if> ELSE#1300 #2801 #2802 <body> #3001;
+<block>		::= <if> | <if_else> | <while> | <for> | <for_each> | <do_while>;
+<if_else>	::= IF #1200 #2810 RB_OPEN <exp>#2813 RB_CLOSE <body> ELSE #2800 #2804 #3001 #2811 #2812 #1300 <body> #2801 #2802 #3001;
+<if>		::= IF #1200 #2810 RB_OPEN <exp>#2813 RB_CLOSE <body> #2811 #2812 #3001;
 <for>		::= FOR #1200 RB_OPEN <declaration>#2001 #2800 #2801 #2810 END <exp> #2813 END #2900 <assignment> #2901 RB_CLOSE #700 <body> #2902#2804 #2811 #2802 #2812 #3001;
 <for_each>	::= FOR EACH RB_OPEN <type>#801 <id>#802 OF <exp>#803 RB_CLOSE#800 <body> #3001 | FOR EACH RB_OPEN <type>#801 <id_vector>#802 OF <exp>#803 RB_CLOSE#800 <body> #3001;
 <while>		::= WHILE #2800 #2810 #2801  RB_OPEN <exp>#2813 RB_CLOSE#900 <body> #3001 #2804 #2811 #2802 #2812;
