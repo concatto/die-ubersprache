@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import backend.DataVariant;
 import backend.LanguageData;
 import backend.Literal;
 import backend.Symbol;
@@ -20,14 +19,15 @@ import backend.operators.BitwiseAnd;
 import backend.operators.BitwiseOr;
 import backend.operators.DifferentThan;
 import backend.operators.EqualThan;
-import backend.operators.GreaterThan;
-import backend.operators.LessThan;
 import backend.operators.GreaterOrEqualThan;
+import backend.operators.GreaterThan;
 import backend.operators.LessOrEqualThan;
+import backend.operators.LessThan;
 import backend.operators.RelationalOperator;
 import backend.operators.Subtract;
 
 public class AssemblyProgram {
+	public static final String RETURN_ADDRESS = "1071";
 	private List<DataItem> dataSection = new ArrayList<>();
 	private Map<Integer, List<String>> labels = new HashMap<>(); //Might have two or more labels in sequence
 	private InstructionSection text = new InstructionSection();
@@ -36,11 +36,15 @@ public class AssemblyProgram {
 		text.store(generateName(symbol));
 	}
 	
-	private static String generateName(Symbol symbol) {
-		return String.format("%s_d%d__%d", symbol.getIdentifier(), symbol.getDepth(), symbol.getScope());
+	public static String generateName(Symbol symbol) {
+		if (symbol.isFunction()) {
+			return "_" + symbol.getIdentifier();
+		} else {
+			return String.format("%s_d%d__%d", symbol.getIdentifier(), symbol.getDepth(), symbol.getScope());
+		}
 	}
 	
-	private static String generateName(Temporary temporary) {
+	public static String generateName(Temporary temporary) {
 		return "100" + temporary.getIndex();
 	}
 	
@@ -187,7 +191,18 @@ public class AssemblyProgram {
 		case SYMBOL:
 			// If it's a variable, we need its assembly name.
 			Symbol symbol = (Symbol) rhs;
-			generateOperation(generateName(symbol), op);
+			
+			// If it's a function and has a return value, it needs special treatment.
+			if (symbol.isFunction() && symbol.getType() != Type.VOID) {
+				Temporary temp = Temporary.reserve();
+				text.store(generateName(temp));
+				text.call(generateName(symbol));
+				load(temp);
+				
+				generateOperation(RETURN_ADDRESS, op);
+			} else {
+				generateOperation(generateName(symbol), op);
+			}
 			
 			break;
 		case TEMPORARY:
@@ -278,5 +293,14 @@ public class AssemblyProgram {
 	
 	public void insertRecording() {
 		text.insertRecording();
+	}
+
+	public void returnToCaller() {
+		text.returnToCaller();
+	}
+	
+	public void storeReturnValue(LanguageData value) {
+		load(value);
+		text.store(RETURN_ADDRESS);
 	}
 }

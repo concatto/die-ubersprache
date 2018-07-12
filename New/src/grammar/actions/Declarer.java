@@ -25,13 +25,18 @@ public class Declarer extends AbstractAction {
 		return currentSymbol.isFunction();
 	}
 
-	public void commitFunction() throws SemanticError {
+	public Symbol commitFunction() throws SemanticError {
 		// The type is always stored in the general symbol
 		functionSymbol.setType(currentSymbol.getType());
+		functionSymbol.setScope(currentSymbol.getScope());
 		commitSymbol(functionSymbol);
 
+		Symbol s = functionSymbol;
+		
 		// Reset the symbol
 		functionSymbol = new Symbol();
+		
+		return s;
 	}
 
 	public void setCurrentIdentifier(String identifier) {

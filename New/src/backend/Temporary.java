@@ -36,6 +36,10 @@ public class Temporary extends LanguageData {
 		throw new IllegalStateException("No temporaries left!");
 	}
 	
+	public static Temporary reserve() {
+		return Temporary.reserve(Type.INTEGER);
+	}
+	
 	public static void release(Temporary temp) {
 		available[temp.getIndex()] = true;
 	}

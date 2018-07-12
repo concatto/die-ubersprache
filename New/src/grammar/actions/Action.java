@@ -46,7 +46,9 @@ public enum Action {
 	END_RECORDING,
 	INSERT_RECORDING,
 	OPEN_DO,
-	TEST_CONDITION_DO_WHILE;
+	TEST_CONDITION_DO_WHILE,
+	RETURN,
+	STORE_RETURN_VALUE;
 
 	public static Action parse(int code) {
 		switch (code) {
@@ -58,6 +60,8 @@ public enum Action {
 			return ASSIGNMENT_FROM_DECLARATION;
 		case 11:
 			return ASSIGNMENT_FROM_ACCESS;
+		case 21:
+			return STORE_RETURN_VALUE;
 		case 25:
 			return ACCESS_POSITION;
 		case 30:
@@ -83,6 +87,7 @@ public enum Action {
 		case 607:
 			return PUSH_LITERAL;
 		case 610:
+		case 2100:
 			return PUSH_SYMBOL;
 		case 401:
 		case 402:
@@ -101,7 +106,9 @@ public enum Action {
 		case 302:
 		case 304:
 		case 305:
-			return PUSH_OPERATOR;
+			return PUSH_OPERATOR;	
+		case 1010:
+			return RETURN;
 		case 1999:
 			return COMPLETE_FUNCTION_DECLARATION;
 		case 2000:

@@ -12,6 +12,7 @@ public class FlowManager {
 	private ScopeManager scopeManager;
 	private AssemblyProgram program;
 	private int totalLabels = 0;
+	private Symbol currentFunction;
 	
 	public FlowManager(ScopeManager scopeManager, AssemblyProgram program) {
 		this.scopeManager = scopeManager;
@@ -87,5 +88,28 @@ public class FlowManager {
 	
 	public void jumpEnd() {
 		program.jump(endStack.peek());
+	}
+
+	public void pushFunction(Symbol func) {
+		pushLabel(AssemblyProgram.generateName(func));
+    	insertTopLabel();
+    	popLabel();
+    	
+    	
+    	this.currentFunction = func;
+    	System.out.println("CURRENT FUNCTION HAS BEEN DEFINED AS");
+    	System.out.println(this.currentFunction);
+	}
+	
+	public void popFunction() {		
+		if (!currentFunction.getIdentifier().equals("main")) {
+			program.returnToCaller();
+		}
+		
+		this.currentFunction = null;
+	}
+	
+	public Symbol getCurrentFunction() {
+		return currentFunction;
 	}
 }
