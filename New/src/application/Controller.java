@@ -132,15 +132,14 @@ public class Controller {
 	        });	      
 	        
 	   String[] lines = {
-			   "funktion main() liefert leer zurück {",
-			   "  ganze a;",
-			   "  ganze b;",
+			   "funktion test() liefert ganze zurück {",
+			   "  zurückliefern 5;",
+			   "}",
 			   "",
-			   "  für (ganze i erhält 0; i kleiner als 10; i erhält i + 1) {",
-			   "    falls (b kleiner als a) {",
-			   "      b erhält i;",
-			   "    }",
-			   "  }",
+			   "funktion main() liefert leer zurück {",
+			   "  ganze a erhält 5;",
+			   "  ganze b;",
+			   "  b erhält a + test();",
 			   "}"
 	   };
       
@@ -297,7 +296,7 @@ public class Controller {
 			} catch (Exception e) {
 				e.printStackTrace();
 				edit_errors.setText(e.getMessage());
-				edit_console.setText("This code contain erros. see the errors screen");
+				edit_console.setText("This code contain errors. see the errors screen");
 			} 
 			
 	  }

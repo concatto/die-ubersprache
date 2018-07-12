@@ -87,6 +87,14 @@ public class InstructionSection {
 	public void jump(String label) {
 		addInstruction("JMP", label);
 	}
+	
+	public void call(String name) {
+		addInstruction("CALL", name);
+	}
+	
+	public void returnToCaller() {
+		addInstruction("RETURN", "");
+	}
 
 	public void storeIndex() {
 		store("$indr");

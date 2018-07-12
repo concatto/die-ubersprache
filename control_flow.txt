@@ -1,0 +1,119 @@
+funktion main() liefert leer zurück {
+	// If dentro de do while
+  ganze a;
+  ganze b;
+
+  tun {
+    falls (b kleiner als a) {
+      b erhält 2 + 2;
+    }
+  } während (a kleiner als b);
+}
+
+
+
+funktion main() liefert leer zurück {
+	// If dentro de while
+  ganze a;
+  ganze b;
+
+  während (a kleiner als b) {
+    falls (b kleiner als a) {
+      b erhält 5;
+    }
+  }
+}
+
+
+
+funktion main() liefert leer zurück {
+	// If dentro de for dentro de do while
+  ganze a;
+  ganze b;
+
+  tun {
+    für (ganze c erhält 5; c kleiner als 10; c erhält c + 1) {
+      schreiben c;
+      falls (c grösser als 2) {
+        schreiben a;
+      }
+    }
+  } während (a kleiner als b);
+}
+
+
+
+funktion main() liefert leer zurück {
+	// If else dentro de for
+  ganze a;
+  ganze b;
+
+  für (ganze c erhält 0; c kleiner als 10; c erhält c + 1) {
+    schreiben c;
+    falls (c grösser als 2) {
+      schreiben a;
+    } sonst {
+      schreiben b + 2;
+    }
+  }
+}
+
+
+
+funktion main() liefert leer zurück {
+	// If e depois while
+  ganze a;
+  ganze b;
+
+  falls (a grösser als 2) {
+    ganze c erhält 3;
+    schreiben c - 3;
+  }
+	
+  während (b ungleich 20) {
+    b erhält b + 1;
+  }
+}
+
+
+
+funktion main() liefert leer zurück {
+	// If else
+  ganze a;
+  ganze b;
+
+  falls (a gleich 2) {
+    ganze c erhält 3;
+    schreiben c - 3;
+  } sonst {
+    b erhält 2;
+  }
+	
+  schreiben a + b;
+}
+
+
+
+funktion main() liefert leer zurück {
+	// While
+  ganze a;
+  ganze b;
+
+  während (b grösser als a) {
+    b erhält b + 1;
+  }
+}
+
+
+
+funktion main() liefert leer zurück {
+	// While dentro de if
+  ganze a;
+  ganze b;
+
+  falls (1 gleich 1) {
+    während (b grösser als a) {
+      b erhält b + 1;
+    }
+  }
+}

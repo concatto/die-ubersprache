@@ -162,7 +162,11 @@ ID : {ID}
 <body>		::= CB_OPEN <statements> CB_CLOSE;
 <function>	::= FUNC ID #32 #1400 RB_OPEN #555 #39 <parameters> #2001 RB_CLOSE GIVES #15 <type> #1999 #2001 #16 BACK <body> #3001 #556;
 
+<<<<<<< HEAD
+<parameters>	::= <parameter_rec> |î;
+=======
 <parameters>	::= <parameter_rec> | î;
+>>>>>>> e76b70d72f0494a77c261c0da66d8bfd9ff8f7a6
 <parameter_rec> 	::= <parameter>#40 COMMA <parameter_rec> | <parameter>#40;
 <parameter>	::= <type> <id_decl> #2000;
 
@@ -173,8 +177,17 @@ ID : {ID}
 <comment>	::= COMMENT | M_COMMENT;
 
 <block>		::= <if> | <if_else> | <while> | <for> | <for_each> | <do_while>;
+<<<<<<< HEAD
 <if>		::= IF #1200 #2800 RB_OPEN <exp>#2803 RB_CLOSE <body> #2810 #2814 #2801 #3001;
 <if_else>	::= <if> ELSE#1300  <body> #2811 #2812 #3001;
+=======
+<if>		::= IF #1200 #2810 RB_OPEN <exp>#2813 RB_CLOSE <body> #2811 #2812 #3001;
+<<<<<<< HEAD
+<if_else>		::= <if> ELSE # #1300 <body> #3001;
+=======
+<if_else>	::= <if> ELSE#1300 <body> #3001;
+>>>>>>> e76b70d72f0494a77c261c0da66d8bfd9ff8f7a6
+>>>>>>> 71314a99bbfb86d8cfd49573278e598692553626
 <for>		::= FOR #1200 RB_OPEN <declaration>#2001 #2800 #2801 #2810 END <exp> #2813 END #2900 <assignment> #2901 RB_CLOSE #700 <body> #2902#2804 #2811 #2802 #2812 #3001;
 <for_each>	::= FOR EACH RB_OPEN <type>#801 <id>#802 OF <exp>#803 RB_CLOSE#800 <body> #3001 | FOR EACH RB_OPEN <type>#801 <id_vector>#802 OF <exp>#803 RB_CLOSE#800 <body> #3001;
 <while>		::= WHILE #2800 #2810 #2801  RB_OPEN <exp>#2813 RB_CLOSE#900 <body> #3001 #2804 #2811 #2802 #2812;

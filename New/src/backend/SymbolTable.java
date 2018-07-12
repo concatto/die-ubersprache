@@ -16,7 +16,7 @@ public class SymbolTable {
 	}
 	
 	public void addSymbol(Symbol symbol) {
-		scopeManager.declare(symbol.getIdentifier());
+		scopeManager.declare(symbol);
 		table.add(symbol);
 	}
 	
@@ -26,6 +26,11 @@ public class SymbolTable {
 		if (!scopeOpt.isPresent()) {
 			throw new SemanticError(String.format("Symbol %s was not declared in this scope.", identifier));
 		}
+		
+		System.out.println("Looking for scope " + scopeOpt.get());
+		table.stream().forEach(s -> {
+			System.out.println(s.getIdentifier() + ", " + s.getScope());
+		});
 		
 		Symbol symbol = table.stream()
 			.filter(s -> s.getIdentifier().equals(identifier) && s.getScope() == scopeOpt.get())

@@ -3,14 +3,12 @@ package grammar;
 import backend.Evaluator;
 import backend.FlowManager;
 import backend.LanguageData;
-import backend.Literal;
 import backend.ScopeManager;
 import backend.Symbol;
 import backend.SymbolTable;
 import backend.Temporary;
 import backend.Type;
 import backend.generator.AssemblyProgram;
-import backend.generator.InstructionSection;
 import backend.operators.Operator;
 import backend.operators.RelationalOperator;
 import grammar.actions.Accessor;
@@ -23,7 +21,6 @@ public class Semantico implements Constants {
 	private Assigner assigner;
 	private Accessor accessor;
 	private Evaluator evaluator = new Evaluator();
-	private InstructionSection instructionSection = new InstructionSection();
 	private SymbolTable table;
 	private ScopeManager scopeManager;
 	private FlowManager flowManager;
@@ -93,7 +90,10 @@ public class Semantico implements Constants {
 
         case COMPLETE_FUNCTION_DECLARATION:
         	declarer.setScope(scopeManager.getTotalScopes());
-        	declarer.commitFunction();
+        	Symbol func = declarer.commitFunction();
+        	
+        	flowManager.pushFunction(func);
+        	
         	break;
 
         case COMPLETE_ASSIGNMENT:
@@ -133,7 +133,7 @@ public class Semantico implements Constants {
         case ACCESS_POSITION:
         	LanguageData index = evaluator.dataStack.peek();
         	System.out.println("Pilha Data"+evaluator.dataStack.peek().getVariant());
-        	Symbol nameVector =  table.getSymbol(accessor.getCurrentIdentifier());
+        	Symbol nameVector = table.getSymbol(accessor.getCurrentIdentifier());
         	accessor.testArrayAccess(index.getType());
         	Temporary temp = program.evaluateVector(index, nameVector, afterErhalt, evaluator.dataStack.peek());
 
@@ -151,14 +151,17 @@ public class Semantico implements Constants {
         case BEGIN_PARAMETERS:
         	declarer.setParameter(true);
         	break;
+        	
         case OPEN_SCOPE:
         	scopeManager.push();
         	//flowManager.pushLabel(lexeme);
         	break;
+        	
         case CLOSE_SCOPE:
         	scopeManager.pop();
         	//flowManager.popLabel();
-        	break; 
+        	break;
+        	
         case OPEN_SCOPE_FUNCTION:
         	break;
         	
@@ -185,7 +188,6 @@ public class Semantico implements Constants {
         case POP_LABEL:
         	flowManager.popLabel();
         	break;
-        	
         	
         case PUSH_START_LABEL:
         	flowManager.pushStart();
@@ -230,6 +232,7 @@ public class Semantico implements Constants {
     	case JUMP_TO_END:
     		flowManager.jumpEnd();
     		break;
+    		
     	case START_RECORDING:
     		program.startRecording();
     		break;
@@ -254,7 +257,29 @@ public class Semantico implements Constants {
     		flowManager.pushLabel(lexeme);
     		flowManager.insertTopLabel();	
     		break;
+<<<<<<< HEAD
 		}	
+=======
+		
+		case TEST_CONDITION_DO_WHILE:
+			// No need to keep the last temporary
+        	Temporary.release((Temporary) evaluator.pop());
+    		flowManager.branchDoWhile((RelationalOperator) evaluator.getLastOperator());
+			
+			break;
+    	
+		case STORE_RETURN_VALUE:
+			program.storeReturnValue(evaluator.pop());
+			break;
+			
+		case RETURN:
+			flowManager.popFunction();
+			break;
+			
+		}
+
+    	
+>>>>>>> 71314a99bbfb86d8cfd49573278e598692553626
 		
     }
 

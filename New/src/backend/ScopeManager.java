@@ -10,6 +10,10 @@ public class ScopeManager {
 	private Stack<Map<String, Integer>> scopes = new Stack<>();
 	private int totalScopes = 0;
   
+	public ScopeManager() {
+		scopes.push(new HashMap<>());
+	}
+	
 	public void push() {
 		scopes.push(new HashMap<>());
 		totalScopes++;
@@ -27,8 +31,13 @@ public class ScopeManager {
 		return scopes.size();
 	}
 
-	public void declare(String identifier) {
-		scopes.peek().put(identifier, totalScopes);
+	public void declare(Symbol symbol) {
+		if (symbol.isFunction()) {
+			// Insert in the parent scope!
+			scopes.get(scopes.size() - 2).put(symbol.getIdentifier(), totalScopes);
+		} else {
+			scopes.peek().put(symbol.getIdentifier(), totalScopes);
+		}
 	}
 	
 	public Optional<Integer> find(String identifier) {
