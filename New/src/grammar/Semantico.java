@@ -88,13 +88,14 @@ public class Semantico implements Constants {
         	declarer.commit();
         	break;
 
-        case COMPLETE_FUNCTION_DECLARATION:
+        case COMPLETE_FUNCTION_DECLARATION: {
         	declarer.setScope(scopeManager.getTotalScopes());
         	Symbol func = declarer.commitFunction();
         	
         	flowManager.pushFunction(func);
         	
         	break;
+        }
 
         case COMPLETE_ASSIGNMENT:
         	assigner.commit(evaluator.dataStack.peek());
@@ -257,9 +258,19 @@ public class Semantico implements Constants {
 			
 			break;
     	
-		case STORE_RETURN_VALUE:
-			program.storeReturnValue(evaluator.pop());
+		case STORE_RETURN_VALUE: {
+			Symbol func = flowManager.getCurrentFunction();
+			LanguageData returnValue = evaluator.pop();
+			
+			if (!assigner.canAssign(func, returnValue)) {
+				String template = "Cannot return type %s from a function that returns %s.";
+				
+				throw new SemanticError(String.format(template, returnValue.getType(), func.getType()));
+			}
+			
+			program.storeReturnValue(returnValue);
 			break;
+		}
 			
 		case RETURN:
 			flowManager.popFunction();

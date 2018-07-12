@@ -32,13 +32,17 @@ public class AssemblyProgram {
 	private Map<Integer, List<String>> labels = new HashMap<>(); //Might have two or more labels in sequence
 	private InstructionSection text = new InstructionSection();
 	
+	public AssemblyProgram() {
+		text.jump("_MAIN");
+	}
+	
 	public void store(Symbol symbol) {
 		text.store(generateName(symbol));
 	}
 	
 	public static String generateName(Symbol symbol) {
 		if (symbol.isFunction()) {
-			return "_" + symbol.getIdentifier();
+			return "_" + symbol.getIdentifier().toUpperCase();
 		} else {
 			return String.format("%s_d%d__%d", symbol.getIdentifier(), symbol.getDepth(), symbol.getScope());
 		}
@@ -117,7 +121,13 @@ public class AssemblyProgram {
 			break;
 		case SYMBOL:
 			Symbol symbol = (Symbol) ld;
-			text.load(generateName(symbol));
+			
+			if (symbol.isFunction() && symbol.getType() != Type.VOID) {
+				text.call(generateName(symbol));
+				text.load(RETURN_ADDRESS);
+			} else {
+				text.load(generateName(symbol));
+			}
 			
 			break;
 		case TEMPORARY:
