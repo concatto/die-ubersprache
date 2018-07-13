@@ -51,7 +51,8 @@ public enum Action {
 	STORE_RETURN_VALUE,
 	FUNCTION_CALL,
 	CALL_PROCEDURE,
-	CALL_PARARAMETERS;
+	CALL_PARARAMETERS,
+	VERIFY_ARGUMENTS;
 
 	public static Action parse(int code) {
 		switch (code) {
@@ -170,6 +171,8 @@ public enum Action {
 			return TEST_CONDITION_DO_WHILE;
 		case 2103:
 			return CALL_PROCEDURE;
+		case 2102:
+			return VERIFY_ARGUMENTS;
 		}
 		
 		

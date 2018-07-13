@@ -31,9 +31,17 @@ public class AssemblyProgram {
 	private List<DataItem> dataSection = new ArrayList<>();
 	private Map<Integer, List<String>> labels = new HashMap<>(); //Might have two or more labels in sequence
 	private InstructionSection text = new InstructionSection();
+	private List<List<LanguageData>> arguments = new ArrayList<>();
+	private SymbolTable table;
 	
 	public AssemblyProgram() {
 		text.jump("_MAIN");
+		
+		arguments.add(new ArrayList<LanguageData>());
+	}
+	
+	public void setTable(SymbolTable table) {
+		this.table = table;
 	}
 	
 	public void store(Symbol symbol) {
@@ -314,7 +322,26 @@ public class AssemblyProgram {
 		text.store(RETURN_ADDRESS);
 	}
 	
-	public void call(Symbol function) {		
+	public void call(Symbol function) {
+		List<Symbol> parameters = table.getParameters(function);
+		
+		int index = 0;
+		for (LanguageData data : arguments.get(0)) {
+			Symbol match = parameters.get(index++);
+			load(data);
+			store(match);
+		}
+		
+		arguments.remove(0);
+		
 		text.call(generateName(function));
+	}
+
+	public void prepareArgument(LanguageData argument) {
+		arguments.get(arguments.size() - 1).add(argument);
+	}
+
+	public void finishArguments() {
+		arguments.add(new ArrayList<LanguageData>());
 	}
 }

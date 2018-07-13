@@ -8,7 +8,7 @@ SemanticName = Semantico
 Package = grammar
 ScannerCaseSensitive = true
 ScannerTable = Compact
-Input = String
+Input = Stream
 Parser = SLR
 #RegularDefinitions
 NUM: [0-9]

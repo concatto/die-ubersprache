@@ -35,11 +35,13 @@ public class Semantico implements Constants {
 		this.declarer = new Declarer(table, program);
 		this.assigner = new Assigner(table, program);
 		this.accessor = new Accessor(table, program);
-
+		
 		evaluator.setProgram(program);
 		scopeManager = new ScopeManager();
 		flowManager = new FlowManager(scopeManager, program);
 		this.table.setScopeManager(scopeManager);
+		
+		program.setTable(table);
 	}
 	
 	boolean firstLDI = true;
@@ -256,19 +258,29 @@ public class Semantico implements Constants {
     		flowManager.insertTopLabel();	
     		break;
     	
-    	case CALL_PARARAMETERS:
-    		Symbol function = (Symbol) evaluator.getFunction(); 
+    	case CALL_PARARAMETERS:{
+    		Symbol function = (Symbol) evaluator.getFunction();
     		List<Symbol> parameters = table.getParameters(function);
     		
-    		if (parameters.size() == 0 || parameters.size() < countParams + 1) {	
-    			throw new SemanticError(String.format("Function does not have the same amount of parameters. TOO MUCH!!"));
-    		} else if (evaluator.dataStack.size() > 1) {
+    		if (evaluator.dataStack.size() > 1) {
         		LanguageData data2 = evaluator.pop();
+        		if(countParams > parameters.size()) {
+        			throw new SemanticError(String.format("Function does not have the same amount of parameters. TOO MUCH!!"));
+        		}
+        		
+        		Symbol matchingParameter = parameters.get(countParams);
+        		
+        		if (!assigner.canAssign(matchingParameter, data2)) {
+        			String template = "Argument of type %s is incompatible with parameter %s.";
+        			throw new SemanticError(String.format(template, data2.getType(), matchingParameter.getType()));
+        		}
+        		
+        		program.prepareArgument(data2);
+//        		program.load(data2);
+//        		program.store(matchingParameter);
         		countParams++;
-        		program.load(data2);
-        		program.store(parameters.get(countParams-1));     			        		
     		}
-    	
+		}
     		break;
     		
 		case TEST_CONDITION_DO_WHILE:
@@ -290,7 +302,21 @@ public class Semantico implements Constants {
 			program.storeReturnValue(returnValue);
 			break;
 		}
+		case VERIFY_ARGUMENTS: {
+			Symbol function = (Symbol) evaluator.peek(); 
+    		List<Symbol> parameters = table.getParameters(function);
+    		System.out.println("TAMANHO: "+parameters.size()+" COUNTPARAMS: "+countParams);
+    		if (parameters.size() == 0 || parameters.size() < countParams) {	
+    			throw new SemanticError(String.format("Function does not have the same amount of parameters. TOO MUCH!!"));
+    		} else if(parameters.size() > countParams) {
+    			throw new SemanticError(String.format("Function does not have the same amount of parameters. NOT ENOUGH!"));
+    		}
+    		
+    		countParams = 0;
+    		program.finishArguments();
+		}
 		
+			break;
 		case CALL_PROCEDURE: {
 			Symbol func = (Symbol) evaluator.pop();
 		
@@ -299,10 +325,6 @@ public class Semantico implements Constants {
 				System.out.println(param);
 			}
 			
-			List<Symbol> parameters2 = table.getParameters(func);
-			if(parameters2.size() > countParams) {
-				throw new SemanticError(String.format("Function does not have the same amount of parameters. NOT ENOUGH!"));
-			}
 			countParams = 0;
 			program.call(func);
 			break;
