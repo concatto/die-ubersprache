@@ -92,11 +92,21 @@ public class Declarer extends AbstractAction {
 				symbol.getScope(), symbol.getDepth(), parameterPosition
 		);
 		
+		toBeAdded.setParentFunction(symbol.getParentFunction());
+		
 		table.addSymbol(toBeAdded);
 		System.out.printf("Symbol added: %s %s %s\n", symbol.getType(), symbol.getIdentifier(), symbol.getScope());
 	}
 
 	public void reset() {
 		currentSymbol = new Symbol();
+	}
+
+	public void setParentFunction(Symbol currentFunction) {
+		currentSymbol.setParentFunction(currentFunction);		
+	}
+	
+	public Symbol getCurrentFunctionSymbol() {
+		return functionSymbol;
 	}
 }

@@ -180,7 +180,7 @@ ID : {ID}
 <while>		::= WHILE #2800 #2810 #2801  RB_OPEN <exp>#2813 RB_CLOSE#900 <body> #3001 #2804 #2811 #2802 #2812;
 <do_while>	::= DO#1100 <body> WHILE RB_OPEN <exp>#61 RB_CLOSE #3002 END;
 
-<instruction>	::= <assignment> | <declaration> #2001 | <input>#14 | <output>#15 | <return> | <exp>;
+<instruction>	::= <assignment> | <declaration> #2001 | <input>#14 | <output>#15 | <return> | <func_call> #2103;
 
 <declaration>	::= <decl_assign> | <decl_only>;
 <decl_assign>	::= <type> <id_decl> ASSIGN <exp> #2000 #10 #4;
@@ -214,7 +214,7 @@ ID : {ID}
 <exp7>		::= <exp7> <arith_low> <exp8> #408 | <exp8>;
 <exp8>		::= <exp8> <arith_high> <exp9> #409 | <exp9> ;
 <exp9> 		::= <negation> <exp10> #410| <exp10>;
-<exp10>		::= <id> #610 | <id_vector> | RB_OPEN <exp> RB_CLOSE | <literal> | <func_call> #2103;
+<exp10>		::= <id> #610 | <id_vector> | RB_OPEN <exp> RB_CLOSE | <literal> | <func_call>;
 
 <vector> 	::= SB_OPEN <exp>#25 SB_CLOSE;
 

@@ -48,7 +48,8 @@ public enum Action {
 	OPEN_DO,
 	TEST_CONDITION_DO_WHILE,
 	RETURN,
-	STORE_RETURN_VALUE;
+	STORE_RETURN_VALUE,
+	CALL_PROCEDURE;
 
 	public static Action parse(int code) {
 		switch (code) {
@@ -162,7 +163,9 @@ public enum Action {
 		case 1100:
 			return OPEN_DO;
 		case 61:
-			return TEST_CONDITION_DO_WHILE;		
+			return TEST_CONDITION_DO_WHILE;
+		case 2103:
+			return CALL_PROCEDURE;
 		}
 		
 		

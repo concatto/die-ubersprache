@@ -132,14 +132,14 @@ public class Controller {
 	        });	      
 	        
 	   String[] lines = {
-			   "funktion test() liefert ganze zurück {",
+			   "funktion test(ganze v) liefert ganze zurück {",
 			   "  zurückliefern 5;",
 			   "}",
 			   "",
 			   "funktion main() liefert leer zurück {",
 			   "  ganze a erhält 5;",
 			   "  ganze b;",
-			   "  b erhält a + test();",
+			   "  test();",
 			   "}"
 	   };
       

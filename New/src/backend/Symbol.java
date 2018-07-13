@@ -1,5 +1,7 @@
 package backend;
 
+import backend.generator.AssemblyProgram;
+
 public class Symbol extends LanguageData {
 	private String identifier;
 	private boolean function;
@@ -11,6 +13,7 @@ public class Symbol extends LanguageData {
 	private int depth;
 	private int parameterPosition;
 	private int count;
+	private Symbol parentFunction;
 
 	public int getParameterPosition() {
 		return parameterPosition;
@@ -122,8 +125,10 @@ public class Symbol extends LanguageData {
 
 	@Override
 	public String toString() {
-		return String.format("%s %s. Func: %b; Arr: %b; Size: %d; Init: %b; Used: %b; Param: %b; Scope: %d; Depth: %d; P. pos: %d",
-				type, identifier, function, isArray(), size, initialized, used, parameter, scope, depth, parameterPosition
+		String parent = parentFunction == null ? "<none>" : parentFunction.identifier;
+		
+		return String.format("%s %s. Func: %b; Arr: %b; Size: %d; Init: %b; Used: %b; Param: %b; Scope: %d; Depth: %d; P. pos: %d, Parent: %s",
+				type, identifier, function, isArray(), size, initialized, used, parameter, scope, depth, parameterPosition, parent
 		);
 	}
 
@@ -135,5 +140,24 @@ public class Symbol extends LanguageData {
 	
 	public int getCount() {
 		return count;
+	}
+
+	public Symbol getParentFunction() {
+		return parentFunction;
+	}
+
+	public void setParentFunction(Symbol parentFunction) {
+		this.parentFunction = parentFunction;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Symbol) {
+			Symbol other = (Symbol) obj;
+			
+			return AssemblyProgram.generateName(this).equals(AssemblyProgram.generateName(other));
+		}
+		
+		return super.equals(obj);
 	}
 }

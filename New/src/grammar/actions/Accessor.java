@@ -35,7 +35,7 @@ public class Accessor extends AbstractAction {
 		
 		System.out.println("here!");
 		
-		if (!s.isInitialized() && !s.isParameter()) {
+		if (!s.isInitialized() && !s.isParameter() && !s.isFunction()) {
 			//System.out.println("here!");
 			Logger.warn(String.format("Symbol %s was used without being initialized.", s.getIdentifier()));
 		}

@@ -1,5 +1,7 @@
 package grammar;
 
+import java.util.stream.Collectors;
+
 import backend.Evaluator;
 import backend.FlowManager;
 import backend.LanguageData;
@@ -83,6 +85,7 @@ public class Semantico implements Constants {
         	break;
 
         case COMPLETE_DECLARATION:
+        	declarer.setParentFunction(declarer.getCurrentFunctionSymbol());
         	declarer.setScope(scopeManager.getTotalScopes());
         	declarer.setDepth(scopeManager.getDepth());
         	declarer.commit();
@@ -271,11 +274,23 @@ public class Semantico implements Constants {
 			program.storeReturnValue(returnValue);
 			break;
 		}
+		
+		case CALL_PROCEDURE: {
+			Symbol func = (Symbol) evaluator.pop();
+		
+			System.out.println("Parameters of " + func.getIdentifier());
+			for (Symbol param : table.getParameters(func)) {
+				System.out.println(param);
+			}
 			
+			program.call(func);
+			break;
+		}
+		
 		case RETURN:
 			flowManager.popFunction();
 			break;
-			
+		
 		}
 
     	
