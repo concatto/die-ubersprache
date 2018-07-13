@@ -68,6 +68,14 @@ public class Evaluator {
 		return dataStack.pop();
 	}
 
+	public LanguageData peek() {
+		return dataStack.peek();
+	}
+	
+	public LanguageData getFunction() {
+		return dataStack.get(dataStack.size()-2);
+	}
+	
 	public void pushLiteral(int code, String lexeme) {
 		Type type = Type.deduceLiteral(code);
 		

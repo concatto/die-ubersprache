@@ -1,5 +1,8 @@
 ﻿package grammar;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import backend.Evaluator;
 import backend.FlowManager;
 import backend.LanguageData;
@@ -41,6 +44,7 @@ public class Semantico implements Constants {
 	
 	boolean firstLDI = true;
 	boolean afterErhalt = false; 
+	int countParams = 0;
     public void executeAction(int code, Token token) throws SemanticError {
         System.out.println("Ação #"+code+", Token: "+token);
 
@@ -83,6 +87,7 @@ public class Semantico implements Constants {
         	break;
 
         case COMPLETE_DECLARATION:
+        	declarer.setParentFunction(declarer.getCurrentFunctionSymbol());
         	declarer.setScope(scopeManager.getTotalScopes());
         	declarer.setDepth(scopeManager.getDepth());
         	declarer.commit();
@@ -250,14 +255,26 @@ public class Semantico implements Constants {
     		flowManager.pushLabel(lexeme);
     		flowManager.insertTopLabel();	
     		break;
-		
+    	
+    	case CALL_PARARAMETERS:
+    		Symbol function = (Symbol) evaluator.getFunction(); 
+    		List<Symbol> parameters = table.getParameters(function);
+    		
+    		if (parameters.size() == 0 || parameters.size() < countParams + 1) {	
+    			throw new SemanticError(String.format("Function does not have the same amount of parameters. TOO MUCH!!"));
+    		} else if (evaluator.dataStack.size() > 1) {
+        		LanguageData data2 = evaluator.pop();
+        		countParams++;
+        		program.load(data2);
+        		program.store(parameters.get(countParams-1));     			        		
+    		}
+    	
+    		break;
+    		
 		case TEST_CONDITION_DO_WHILE:
 			// No need to keep the last temporary
         	Temporary.release((Temporary) evaluator.pop());
     		flowManager.branchDoWhile((RelationalOperator) evaluator.getLastOperator());
-			
-			break;
-		case FUNCTION_CALL:
 			
 			break;
 		case STORE_RETURN_VALUE: {
@@ -273,11 +290,28 @@ public class Semantico implements Constants {
 			program.storeReturnValue(returnValue);
 			break;
 		}
+		
+		case CALL_PROCEDURE: {
+			Symbol func = (Symbol) evaluator.pop();
+		
+			System.out.println("Parameters of " + func.getIdentifier());
+			for (Symbol param : table.getParameters(func)) {
+				System.out.println(param);
+			}
 			
+			List<Symbol> parameters2 = table.getParameters(func);
+			if(parameters2.size() > countParams) {
+				throw new SemanticError(String.format("Function does not have the same amount of parameters. NOT ENOUGH!"));
+			}
+			countParams = 0;
+			program.call(func);
+			break;
+		}
+		
 		case RETURN:
 			flowManager.popFunction();
 			break;
-			
+		
 		}
 
 		

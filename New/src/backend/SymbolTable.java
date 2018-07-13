@@ -2,8 +2,10 @@ package backend;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import grammar.SemanticError;
 
@@ -55,4 +57,10 @@ public class SymbolTable {
 		return table;
 	}
 	
+	public List<Symbol> getParameters(Symbol function) {
+		return table.stream()
+				.filter(s -> s.getParentFunction() != null && s.getParentFunction().equals(function))
+				.sorted((a, b) -> a.getParameterPosition() - b.getParameterPosition())
+				.collect(Collectors.toList());
+	}
 }

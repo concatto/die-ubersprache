@@ -123,7 +123,7 @@ public class AssemblyProgram {
 			Symbol symbol = (Symbol) ld;
 			
 			if (symbol.isFunction() && symbol.getType() != Type.VOID) {
-				text.call(generateName(symbol));
+				call(symbol);
 				text.load(RETURN_ADDRESS);
 			} else {
 				text.load(generateName(symbol));
@@ -206,7 +206,7 @@ public class AssemblyProgram {
 			if (symbol.isFunction() && symbol.getType() != Type.VOID) {
 				Temporary temp = Temporary.reserve();
 				text.store(generateName(temp));
-				text.call(generateName(symbol));
+				call(symbol);
 				load(temp);
 				
 				generateOperation(RETURN_ADDRESS, op);
@@ -312,5 +312,9 @@ public class AssemblyProgram {
 	public void storeReturnValue(LanguageData value) {
 		load(value);
 		text.store(RETURN_ADDRESS);
+	}
+	
+	public void call(Symbol function) {		
+		text.call(generateName(function));
 	}
 }
