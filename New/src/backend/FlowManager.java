@@ -24,7 +24,11 @@ public class FlowManager {
 	}
 	
 	public void pushLabel(String lexeme) {
-		labelStack.push(lexeme.toUpperCase() + "_" + scopeManager.getTotalScopes());
+		pushLabelExact(lexeme.toUpperCase() + "_" + scopeManager.getTotalScopes());
+	}
+	
+	private void pushLabelExact(String label) {
+		labelStack.push(label);
 	}
 	
 	public void pushLabel() {
@@ -79,13 +83,9 @@ public class FlowManager {
 	}
 	
 	public void branchDoWhile(RelationalOperator op) {
-<<<<<<< HEAD
-		program.branchDoWhile(op, endStack.peek());
-	}
-=======
 		program.branchDoWhile(op, labelStack.peek());
 	}	
->>>>>>> 71314a99bbfb86d8cfd49573278e598692553626
+
 	
 	public void jumpStart() {
 		program.jump(startStack.peek());
@@ -96,7 +96,7 @@ public class FlowManager {
 	}
 
 	public void pushFunction(Symbol func) {
-		pushLabel(AssemblyProgram.generateName(func));
+		pushLabelExact(AssemblyProgram.generateName(func));
     	insertTopLabel();
     	popLabel();
     	

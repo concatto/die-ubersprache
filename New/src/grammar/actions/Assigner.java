@@ -45,10 +45,7 @@ public class Assigner extends AbstractAction {
 		}
 		
 		// TODO Will have to be fixed.
-		assignmentOperator.setOperands(symbol, rhs);
-		Type result = assignmentOperator.verify();
-		
-		if (result != symbol.getType()) {
+		if (!canAssign(symbol, rhs)) {
 			String message = "Type %s cannot be assigned to a symbol of type %s.";
 			
 			throw new SemanticError(String.format(message, rhs.getType(), symbol.getType()));
@@ -62,5 +59,13 @@ public class Assigner extends AbstractAction {
 		if (rhs.getVariant() == DataVariant.TEMPORARY) {
 			Temporary.release((Temporary) rhs);
 		}
+	}
+	
+	public boolean canAssign(LanguageData lhs, LanguageData rhs) {
+		assignmentOperator.setOperands(lhs, rhs);
+		Type result = assignmentOperator.verify();
+		System.out.println("lhs " + lhs.getType() + " , rhs " + rhs.getType() + ". result " + result);
+		
+		return result == lhs.getType();
 	}
 }

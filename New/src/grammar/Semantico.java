@@ -1,4 +1,4 @@
-package grammar;
+﻿package grammar;
 
 import backend.Evaluator;
 import backend.FlowManager;
@@ -88,13 +88,14 @@ public class Semantico implements Constants {
         	declarer.commit();
         	break;
 
-        case COMPLETE_FUNCTION_DECLARATION:
+        case COMPLETE_FUNCTION_DECLARATION: {
         	declarer.setScope(scopeManager.getTotalScopes());
         	Symbol func = declarer.commitFunction();
         	
         	flowManager.pushFunction(func);
         	
         	break;
+        }
 
         case COMPLETE_ASSIGNMENT:
         	assigner.commit(evaluator.dataStack.peek());
@@ -244,22 +245,11 @@ public class Semantico implements Constants {
     	case INSERT_RECORDING:
     		program.insertRecording();
     		break;
-     
-    	case TEST_CONDITION_DO_WHILE:
-        	// No need to keep the last temporary
-        	Temporary.release((Temporary) evaluator.pop());
-        	Operator op2 = evaluator.getLastOperator();
-        	System.out.println("PASSOUOUOUOUOUOUOUOUOUOUOUOUOU");
-        	flowManager.branchDoWhile((RelationalOperator) op2);
-        	break;
     		
     	case OPEN_DO:
     		flowManager.pushLabel(lexeme);
     		flowManager.insertTopLabel();	
     		break;
-<<<<<<< HEAD
-		}	
-=======
 		
 		case TEST_CONDITION_DO_WHILE:
 			// No need to keep the last temporary
@@ -267,10 +257,22 @@ public class Semantico implements Constants {
     		flowManager.branchDoWhile((RelationalOperator) evaluator.getLastOperator());
 			
 			break;
-    	
-		case STORE_RETURN_VALUE:
-			program.storeReturnValue(evaluator.pop());
+		case FUNCTION_CALL:
+			
 			break;
+		case STORE_RETURN_VALUE: {
+			Symbol func = flowManager.getCurrentFunction();
+			LanguageData returnValue = evaluator.pop();
+			
+			if (!assigner.canAssign(func, returnValue)) {
+				String template = "Cannot return type %s from a function that returns %s.";
+				
+				throw new SemanticError(String.format(template, returnValue.getType(), func.getType()));
+			}
+			
+			program.storeReturnValue(returnValue);
+			break;
+		}
 			
 		case RETURN:
 			flowManager.popFunction();
@@ -278,8 +280,6 @@ public class Semantico implements Constants {
 			
 		}
 
-    	
->>>>>>> 71314a99bbfb86d8cfd49573278e598692553626
 		
     }
 
